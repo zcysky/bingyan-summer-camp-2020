@@ -1,0 +1,16 @@
+{
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+  "interval": 5,
+  "count":  3,
+  "list": [
+    {
+      "room_id": 1017
+    },
+    {
+      "room_id": 34348
+    },
+    {
+      "room_id": 21641569
+    }
+  ]
+}
