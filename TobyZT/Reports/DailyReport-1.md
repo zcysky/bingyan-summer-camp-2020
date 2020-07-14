@@ -6,4 +6,3 @@
 - 语言学习：熟悉了Golang的基础语法，稍微了解了Go语言的高级特性
 - gin框架学习：了解了一丢丢gin的路由功能
 - 完成小任务：用Go + gin做出了简单的猜数字游戏
-  ![image-20200713213251777](/home/tobyzt/.config/Typora/typora-user-images/image-20200713213251777.png)
