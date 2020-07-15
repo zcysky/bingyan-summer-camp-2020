@@ -1,3 +1,4 @@
+/*Day2 A Simple WebCrawler*/
 package main
 
 import (
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type LiveInfo struct {
@@ -19,6 +21,7 @@ type LiveInfo struct {
 type ResInfo struct {
 	ID []int
 	Title []string
+	UserName []string
 }
 
 func Live(c *gin.Context) {
@@ -47,13 +50,17 @@ func Live(c *gin.Context) {
 		}
 
 		doc.Find("#link-app-title").Each(func(i int, s *goquery.Selection) {
-			/*
-			reg1 := regexp.MustCompile(`(?s:(.*?))`)
-			if reg1 == nil {
-				fmt.Println("regexp err")
+			rawData := s.Text()
+			data := strings.Split(rawData,"-")
+			fmt.Println(rawData)
+			fmt.Println(data)
+			if len(data)>1 {
+				resInfo.Title = append(resInfo.Title, data[0])
+				resInfo.UserName = append(resInfo.UserName, data[1])
+			} else {
+				resInfo.Title = append(resInfo.Title, "Unknown")
+				resInfo.UserName = append(resInfo.UserName, "Unknown")
 			}
-			fmt.Println(reg1.FindAllStringSubmatch(str, -1)) */
-			resInfo.Title = append(resInfo.Title, s.Text())
 			resInfo.ID = append(resInfo.ID, id)
 		})
 		//ioutil.WriteFile("data/"+strconv.Itoa(order)+".txt", []byte(buf.String()), 0666)
@@ -65,9 +72,7 @@ func Live(c *gin.Context) {
 		fmt.Println(err)
 	}
 	ioutil.WriteFile("config/res.json", jsonRes, 0666)
-	c.HTML(http.StatusOK, "home.html", gin.H{
-		"interval": info.Interval,
-	})
+	c.JSON(http.StatusOK, resInfo)
 }
 
 func ParseJson(path string, info *LiveInfo) error {
