@@ -1,0 +1,38 @@
+{
+  "user1": {
+    "username": "John",
+    "password": "123",
+    "reg_time": "7.14",
+    "email": "john@123.com"
+  },
+  "user2": {
+    "username": "John",
+    "password": "123",
+    "reg_time": "7.14",
+    "email": "john@123.com"
+  },
+  "user3": {
+    "username": "Bob",
+    "password": "123",
+    "reg_time": "7.14",
+    "email": "bob@123.com"
+  },
+  "user4": {
+    "username": "Juli",
+    "password": "123",
+    "reg_time": "7.14",
+    "email": "juli@123.com"
+  },
+  "user5": {
+    "username": "Hp",
+    "password": "123",
+    "reg_time": "7.14",
+    "email": "hp@123.com"
+  },
+  "user6": {
+    "username": "Alex",
+    "password": "123",
+    "reg_time": "7.14",
+    "email": "alex@123.com"
+  }
+}
