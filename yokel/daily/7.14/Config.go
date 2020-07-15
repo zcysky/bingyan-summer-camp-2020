@@ -7,8 +7,8 @@ import (
 import "fmt"
 
 type Config struct {
-	LIVEId        []int64 `json:"LIVE_ID"`
-	FetchInterval int64   `json:"FetchInterval"`
+	LiveId        []int64 `json:"live_id"`
+	FetchInterval int64   `json:"fetch_interval"`
 }
 
 func LoadConfig(file string) Config {
