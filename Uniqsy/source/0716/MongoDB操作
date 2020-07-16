@@ -1,0 +1,73 @@
+- 新建表 test
+use test
+
+- 新建集合 user
+- 向集合 user 中插入几个记录，每个记录包含字段：username, password, reg_time, email
+db.user.insert([
+{
+    "username": "001",
+    "password": "001pwd",
+    "reg_time": new Date(),
+    "email":    "001@email.com"
+},{
+    "username": "002",
+    "password": "002pwd",
+    "reg_time": new Date(),
+    "email":    "002@email.com"
+},{
+    "username": "003",
+    "password": "003pwd",
+    "reg_time": new Date(),
+    "email":    "003@email.com"
+}
+
+- 根据 ObjectId 查询、修改、删除用户
+db.user.find({
+	_id:   ObjectId("5f103dcfa54fa6c2fa389b4c")
+})
+
+db.user.update(
+    {
+    	_id:     ObjectId("5f103dcfa54fa6c2fa389b4c")
+    },{
+    	$set:{
+    		'username':      "changed"
+    	}
+    }
+)
+
+db.user.remove({
+	_id:   ObjectId("5f103dcfa54fa6c2fa389b4c")
+})
+
+- 根据用户名模糊查询用户
+
+db.user.find({
+	username: {$regex:	"an"}
+})
+
+- 设计查询语句：user 集合中的记录都包含 friends 字段，该字段是 String 数组，请查询该数组中含有 test1 或 test2 的记录条目数
+
+db.user.find({
+    $or: [{
+        friends: "test1"
+    },{
+        friends: "test2"
+    }]
+}).count()
+
+
+- 设计更新语句：user 集合中的记录包含 school, major, class 三个 String 字段，请你在所有记录里新建字段 class_name，该字段值为 schooo, major, class 三个字段字符串的拼接
+db.user.find().forEach(
+    function(item) {
+        db.user.update(
+	        {"_id" : { $exists : true }},
+	        {$set: {
+	            "class_name": item.school + item.major + item.class
+	            }
+	        },
+	        false,
+	        true
+        )
+    }
+)

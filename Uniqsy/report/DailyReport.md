@@ -43,3 +43,14 @@
 [cnblogs gin框架JWT的使用](https://www.cnblogs.com/jiujuan/p/11403066.html)
 
 [GitHub gin-jwt-token](https://github.com/BGBiao/gin-jwt-token)
+
+## 0716
+
+### 学习内容
+
+1. 在云服务器上用docker安装了MongoDB并在本地用Robo3t链接
+2. 学习练习了MongoDB的基本操作
+
+### 参考资料
+
+[MongoDB官方文档 Getting Started](https://docs.mongodb.com/manual/tutorial/getting-started/)
