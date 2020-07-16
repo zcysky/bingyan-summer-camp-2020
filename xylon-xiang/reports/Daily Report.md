@@ -44,3 +44,19 @@
 * MongoDB查找中带条件的查找,以及使用find().forEach()中的function进行复杂的增删改差。
 * go routine，并发理解，以及使用channel在routine之间通信
 
+
+
+## 2020.7.16
+
+### 学习任务
+
+* echo框架的使用
+* JWT理论知识
+* 使用echo JWT中间件实现验证
+
+### 重点
+
+* JWT的理论即代码实现
+* JWT验证
+* 文件看清楚再删！！！！！！！！
+
