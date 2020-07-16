@@ -1,5 +1,5 @@
 /*Day3 Start learning mongodb*/
-package main
+package database
 
 import (
 	"context"
@@ -46,6 +46,12 @@ func main() {
 
 	objID, _ := primitive.ObjectIDFromHex("5f0f007701736b547d88e186")
 	UpdatePassword(objID, "23336666", collection)
+
+	// Disconnect
+	err = client.Disconnect(context.TODO())
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func InsertUser(info Student, collection *mongo.Collection) interface{} {
