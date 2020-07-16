@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
 	"sync"
 	"time"
 )
@@ -15,30 +14,31 @@ import (
 
 var wg sync.WaitGroup
 
-func loadLiveInfo(loadChannel <-chan int64, storeChannel chan<- LIVEinfo) {
+func loadLiveInfo(loadChannel <-chan int64, storeSlice *[]LIVEinfo)error {
 	defer wg.Done()
 	for id := range loadChannel {
-		storeChannel <- getLIVEInfo(id)
-		fmt.Println("finish", id)
+		value,err:=getLIVEInfo(id)
+		if err!=nil{
+			return err
+		}
+		*storeSlice=append(*storeSlice, value)
+		//fmt.Println(value)
+		//fmt.Println("finish", id)
 	}
+	return nil
 }
 
-func StoreToFile(url string, storeChannel chan LIVEinfo) {
+func StoreToFile(url string, storeSlice []LIVEinfo) {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
-	fmt.Println(client, err)
+	//fmt.Println(client, err)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	err = client.Connect(ctx)
 	collection := client.Database("test").Collection("project1")
 
-	for value := range storeChannel {
-		_, err = collection.InsertOne(context.Background(), bson.M{
-			"Title":       value.LIVEinfo.Title,
-			"Uid":         value.LIVEinfo.Uid,
-			"Status":      value.LIVEinfo.Status,
-			"Avatar":      value.LIVEinfo.Avatar,
-			"Description": value.LIVEinfo.Description,
-		})
+	for _,value := range storeSlice  {
+		//fmt.Print(value)
+		_, err = collection.InsertOne(context.Background(), value)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -47,11 +47,14 @@ func StoreToFile(url string, storeChannel chan LIVEinfo) {
 }
 
 func main() {
-	configInfo := LoadConfig("./Config.json")
+	configInfo,err:= LoadConfig("./Config.json")
+	if(err!=nil){
+		fmt.Println(err)
+	}
 	loadChannel := make(chan int64, 100)
-	storeChannel := make(chan LIVEinfo, 100)
+	storeSlice := []LIVEinfo{}
 	for i := 0; i < 3; i++ {
-		go loadLiveInfo(loadChannel, storeChannel)
+		go loadLiveInfo(loadChannel, &storeSlice)
 		wg.Add(1)
 	}
 	for i, value := range configInfo.LiveId {
@@ -63,6 +66,6 @@ func main() {
 	}
 	close(loadChannel)
 	wg.Wait()
-	close(storeChannel)
-	StoreToFile("./data.json", storeChannel)
+	fmt.Println(storeSlice)
+	StoreToFile("./data.json", storeSlice)
 }
