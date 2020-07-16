@@ -14,6 +14,27 @@ import (
 
 var routinePool sync.WaitGroup
 
+func getIdListAndTimeInterval() ([]string, time.Duration, error){
+
+	// get the config from the src/config.go
+	config := src.Config{}
+
+	apiConfig, err := src.ApiConfig()
+	if err != nil {
+		return nil, 0, err
+	}
+	err = json.Unmarshal(apiConfig, &config)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	roomIdList := config.IdList
+	timeInterval := config.TimeInterval
+
+	return roomIdList, timeInterval, nil
+
+}
+
 func writeJsonIntoDB(roomId string, interval time.Duration) error {
 	// create a connection with the MongoDB
 	client, err := NewClient(options.Client().ApplyURI("mongodb://@localhost:27017"))
@@ -58,40 +79,20 @@ func writeJsonIntoDB(roomId string, interval time.Duration) error {
 	// the interval time after a api request
 	time.Sleep(interval)
 
-
-	routinePool.Done()
-
 	// if no error, then return the nil
 	return nil
 }
 
-func roomIdEnterList(roomIdList []string, list chan string)  {
+func routineDB(roomId chan string, timeInterval time.Duration){
 
-	for i := 0; i < len(roomIdList); i++ {
-		list <- roomIdList[i]
+	for j := range roomId{
+		err := writeJsonIntoDB(j, timeInterval)
+		if err != nil{
+			fmt.Println(err)
+		}
 	}
 
 	routinePool.Done()
-}
-
-func getIdListAndTimeInterval() ([]string, time.Duration, error){
-
-	// get the config from the src/config.go
-	config := src.Config{}
-
-	apiConfig, err := src.ApiConfig()
-	if err != nil {
-		return nil, 0, err
-	}
-	err = json.Unmarshal(apiConfig, &config)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	roomIdList := config.IdList
-	timeInterval := config.TimeInterval
-
-	return roomIdList, timeInterval, nil
 
 }
 
@@ -104,17 +105,20 @@ func main() {
 
 	roomId := make(chan string)
 
-	routinePool.Add(1)
-	go roomIdEnterList(roomIdList, roomId)
+	routinePool.Add(3)
+	go routineDB(roomId, timeInterval)
+	go routineDB(roomId, timeInterval)
+	go routineDB(roomId, timeInterval)
 
-
-	for j := range roomId{
-		routinePool.Add(1)
-		go writeJsonIntoDB(j, timeInterval)
+	for j := 0; j < len(roomIdList); j++{
+		roomId <- roomIdList[j]
 	}
 
+	close(roomId)
 
 	routinePool.Wait()
+
+
 
 	//
 	//pool.Wait()
