@@ -23,6 +23,8 @@
 - 环境配置：用Docker创建了mongoDB容器作为数据库（Docker真香！）；安装了Robo3T并使用
 - 数据库学习：熟悉了在MongoDB控制台中进行增删改等操作，学会了用在go中用mongo-driver与数据库连接并交互，但数据库的批量操作仍不熟悉
 
- 
+### Day 4
 
-​    
+- 学习了JWT令牌的结构和基本原理，用Go实现了JWT令牌的签发和解析
+- 用gin框架实现了处理请求头Authorization中的JWT令牌
+- 大致了解了MVC模型和RESTful设计原则

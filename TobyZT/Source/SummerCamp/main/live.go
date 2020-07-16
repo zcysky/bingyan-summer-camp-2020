@@ -2,6 +2,7 @@
 package main
 
 import (
+	"SummerCamp/database"
 	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -18,11 +19,6 @@ type LiveInfo struct {
 	Interval int
 }
 
-type ResInfo struct {
-	ID []int
-	Title []string
-	UserName []string
-}
 
 func Live(c *gin.Context) {
 	// Get liveID from json file:
@@ -33,7 +29,7 @@ func Live(c *gin.Context) {
 	}
 
 	// Request http:
-	var resInfo ResInfo
+	var resInfo database.ResInfo
 	for _, id := range info.ID {
 		url := "https://live.bilibili.com/" + strconv.Itoa(id)
 		fmt.Println(url)
@@ -65,13 +61,17 @@ func Live(c *gin.Context) {
 		})
 		//ioutil.WriteFile("data/"+strconv.Itoa(order)+".txt", []byte(buf.String()), 0666)
 	}
-	// Write the res into res.json
+	// Write the results into res.json
 	jsonRes, err := json.Marshal(resInfo)
 	fmt.Println(resInfo)
 	if err != nil {
 		fmt.Println(err)
 	}
 	ioutil.WriteFile("config/res.json", jsonRes, 0666)
+
+	// Save results into database
+	database.SaveResInfo(resInfo)
+
 	c.JSON(http.StatusOK, resInfo)
 }
 
