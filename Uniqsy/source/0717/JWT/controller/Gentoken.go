@@ -21,7 +21,6 @@ func GenToken(jwtClaim *model.JWTClaims) (string, error) {
 		},
 	}
 
-
 	// 利用配置文件中给出的secret进行加密，完成签名
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaim)
 	return token.SignedString([]byte(config.Config.Secret))

@@ -13,6 +13,7 @@ type ConfigStruct struct {
 var Config ConfigStruct
 
 func init() {
+	//解析配置文件config.json
 	configFile, err := ioutil.ReadFile("./config/config.json")
 	if err != nil {
 		panic(err)

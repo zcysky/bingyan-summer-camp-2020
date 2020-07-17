@@ -6,11 +6,8 @@ import (
 )
 
 type JWTClaims struct {
+	//token的结构，自定义用户id + 标准结构
 	UserID 	uuid.UUID	`json:"user_id"`
 	jwt.StandardClaims
-}
-
-func NewJWTClaim() *JWTClaims{
-	return new(JWTClaims)
 }
 
