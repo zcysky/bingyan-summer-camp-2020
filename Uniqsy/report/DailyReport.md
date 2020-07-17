@@ -54,3 +54,11 @@
 ### 参考资料
 
 [MongoDB官方文档 Getting Started](https://docs.mongodb.com/manual/tutorial/getting-started/)
+
+## 0717
+
+### 学习内容
+
+1. 学习MVC设计模式（话说为啥我找了两本设计模式的书都没有，最后还是从网上看的）
+2. 学习JWT基本原理与实现
+3. 实现了gin框架下简单应用JWT令牌
