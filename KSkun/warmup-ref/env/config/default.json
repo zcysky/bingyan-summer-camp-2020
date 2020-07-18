@@ -1,0 +1,20 @@
+{
+  "app": {
+    "address": "127.0.0.1:23333",
+    "verify_code_length": 6,
+    "verify_code_expire": 30
+  },
+  "jwt": {
+    "token_expire": 180,
+    "secret": "WaRMuP-reF&U4@3"
+  },
+  "mongo": {
+    "address": "127.0.0.1",
+    "port": 27017,
+    "database": "warmup-ref"
+  },
+  "redis": {
+    "address": "127.0.0.1",
+    "port": 6379
+  }
+}
