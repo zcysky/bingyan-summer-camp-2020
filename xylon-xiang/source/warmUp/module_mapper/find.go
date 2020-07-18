@@ -6,7 +6,7 @@ import (
 )
 
 // return the result
-func FindMapper(name string, i interface{}, all bool) (interface{}, error) {
+func FindMapper(name string, i string, all bool) (interface{}, error) {
 
 	if !all {
 		var result User
@@ -20,16 +20,21 @@ func FindMapper(name string, i interface{}, all bool) (interface{}, error) {
 		return result, nil
 	} else {
 		var result []User
-
-		cur, err := UserCol.Find(context.TODO(), bson.M{
-			name: i,
-		})
+		cur, err := UserCol.Find(context.TODO(), bson.D{})
 		if err != nil {
 			return nil, err
 		}
+		defer cur.Close(context.TODO())
 
-		if err = cur.All(context.TODO(), &result); err != nil {
-			return nil, err
+		for cur.Next(context.TODO()){
+			var element User
+
+			err := cur.Decode(&element)
+			if err != nil{
+				return nil, err
+			}
+
+			result = append(result, element)
 		}
 
 		return result, nil
