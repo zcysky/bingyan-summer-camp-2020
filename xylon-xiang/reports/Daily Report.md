@@ -14,3 +14,62 @@
 * Go mod。最初未使用Go mod构建项目时每次创建新项目都需新建GOPATH参数。使用Go mod可免去此步骤。同时，Go mod个人感觉部分功能与Java中的Maven类似，可以自动添加依赖，而不用手动控制。
 * 学会看官方文档。大数相加任务最初未仔细看官方文档，自己手写数字字符串的加法。后查`math.big`文档，发现有直接将字符串转为`big.Int`的函数。
 
+
+
+## 2020.7.14
+
+### 学习内容
+
+* 发Http请求
+* Go中对Json的处理
+* go routine使用
+
+### 重点
+
+* Http请求的发送。使用client+NewRequest发送请求，返回Json
+* Json在Go中是[]byte，对其进行解码，用struct与其对应
+* go routine，对并发知识的理解。
+
+
+
+## 2020.7.15
+
+### 学习内容
+
+* MongoDB的基本语法,增删改差,正则匹配
+* 昨天写的代码重构
+
+### 重点
+
+* MongoDB查找中带条件的查找,以及使用find().forEach()中的function进行复杂的增删改差。
+* go routine，并发理解，以及使用channel在routine之间通信
+
+
+
+## 2020.7.16
+
+### 学习任务
+
+* echo框架的使用
+* JWT理论知识
+* 使用echo JWT中间件实现验证
+
+### 重点
+
+* JWT的理论即代码实现
+* JWT验证
+* 文件看清楚再删！！！！！！！！
+
+
+
+## 2020.7.17
+
+### 学习任务
+
+* Restful风格的api文档
+* MVC设计框架
+
+### 重点
+
+* Restful的意义，如何设计Rustful风格的api
+* MVC的数据逻辑，具体的代码实现
