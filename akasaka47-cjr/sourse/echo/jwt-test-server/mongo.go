@@ -45,7 +45,7 @@ func Insert(client *mongo.Client, u *User) error{
 	return nil
 }
 
-func Check(client *mongo.Client, u *User) bool{
+func CheckEmail(client *mongo.Client, u *User) bool{
 	collection := client.Database("test").Collection("user-data-test")
 	filter := bson.D{{"email", u.Email}}
 	var result User
@@ -54,4 +54,15 @@ func Check(client *mongo.Client, u *User) bool{
 		return false
 	}
 	return true
+}
+
+func CheckUser(client *mongo.Client, u *User) (bool, *User){
+	collection := client.Database("test").Collection("user-data-test")
+	filter := bson.D{{"name", u.Name}, {"password", u.Password}}
+	result := new(User)
+	err := collection.FindOne(context.TODO(), filter).Decode(result)
+	if err != nil {
+		return false, nil
+	}
+	return true, result
 }

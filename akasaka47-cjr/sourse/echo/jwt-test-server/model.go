@@ -1,16 +1,21 @@
 package main
 
 import (
+	"bytes"
+	"crypto/rand"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/garyburd/redigo/redis"
 	"github.com/labstack/echo"
 	_ "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	_ "go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/gomail.v2"
+	"math/big"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func Signup(server *echo.Echo, client *mongo.Client) {
@@ -28,26 +33,13 @@ func Signup(server *echo.Echo, client *mongo.Client) {
 		mail := new(Email)
 		mail.Name = u.Email
 		if strings.Count(mail.Name, "@") == 1 {
-			if Check(client, u) {
-				mail.Status = true
+			if CheckEmail(client, u) {
+				mail.Status = false
 				mail.Info = "该邮箱已被注册！"
 			} else {
-				mail.Status = false
+				mail.Status = true
 				mail.Info = "该邮箱未被注册！验证码已发送，请查收。"
 				str := CreateRandomString(6)
-				//emailReg := utils.Email{
-				//	Username: "akasaka907@163.com",
-				//	Password: "ryuunosuke47",       //"VWBWKCXALLJBRGIR",
-				//	Host: "smtp.163.com",
-				//	Port: 25,
-				//}
-				//emailReg.Subject = "echo服务器测试，注册激活码" //标题：某某软件激活
-				//emailReg.From = str
-				//emailReg.To = []string{mail.Name}
-				//err := emailReg.Send()
-				//if err != nil {
-				//	mail.Checkstr = "send email failed"
-				//}
 				err := SendMail(mail.Name, "test-echo验证码", str)
 				if err != nil {
 					mail.Checkstr = "send email failed"
@@ -70,30 +62,130 @@ func Signup(server *echo.Echo, client *mongo.Client) {
 		if err := context.Bind(u); err != nil {
 			fmt.Println("error")
 		}
-		status, err:=FindRedis(re, u.Email, u.Checkstr)
-		if err == nil || status == true{
-			u.ID = CreateRandomString(4)
-			u.Checkstr = ""
-			err := Insert(client,u)
-			if err != nil {
-				u.Info = "用户创建失败"
-			}else{
+		context.Handler()
+		status, err := FindRedis(re, u.Email, u.Checkstr)
+		if CheckEmail(client, u) {
+			u.Info = "用户已存在"
+			u.Status = false
+		} else {
+			if err == nil && status == true {
+				u.ID = CreateRandomString(4)
+				u.Checkstr = ""
 				u.Info = "用户创建成功"
+				u.Status = true
+				err := Insert(client, u)
+				if err != nil {
+					u.Info = "用户创建失败"
+				}
+			} else {
+				u.Status = false
+				u.Info = "验证码错误，用户创建失败"
 			}
-		}else{
-			u.Info = "验证码错误，用户创建失败"
 		}
 		u.Password = ""
 		return context.JSON(http.StatusOK, u)
 	})
 }
 
-func Login(server *echo.Echo) {
+func Login(server *echo.Echo, client *mongo.Client) {
+	server.POST("/login", func(c echo.Context) error {
+		u := new(User)
+		if err := c.Bind(u); err != nil {
+			fmt.Println("error")
+		}
+		status, result := CheckUser(client, u)
+		if status {
+			// Set custom claims
+			claims := &jwtCustomClaims{
+				result.Name,
+				true,
+				jwt.StandardClaims{
+					ExpiresAt: time.Now().Add(time.Hour * 2).Unix(),
+					Id: result.ID,
+				},
+			}
+			// Create token with claims
+			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+			// Generate encoded token and send it as response.
+			tokenstr, err := token.SignedString([]byte(Info.JWTsecret))
+			if err != nil {
+				return err
+			}
+			result.Password = ""
+			result.Info = "登录成功"
+			result.Status = true
+			result.Token = tokenstr
+			return c.JSON(http.StatusOK, result)
+		}
+		ru := new(User)
+		ru.Status = false
+		ru.Info = "登录失败"
+		return c.JSON(http.StatusOK, ru)
+	})
+}
 
+func MainPage(server *echo.Echo, IsLoggedIn echo.MiddlewareFunc) {
+	server.GET("/mainpage", func(c echo.Context) error {
+		user := c.Get("user").(*jwt.Token)
+		claims := user.Claims.(*jwtCustomClaims)
+		name := claims.Name
+		r := new(User)
+		r.Status = true
+		r.Info = "登录成功"
+		r.Name = name
+		r.ID = claims.Id
+		return c.JSON(http.StatusOK, r)
+	}, IsLoggedIn)
+}
+
+func CreateRandomString(len int) string {
+	var container string
+	//var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+	var str = "1234567890"
+	b := bytes.NewBufferString(str)
+	length := b.Len()
+	bigInt := big.NewInt(int64(length))
+	for i := 0; i < len; i++ {
+		randomInt, _ := rand.Int(rand.Reader, bigInt)
+		container += string(str[randomInt.Int64()])
+	}
+	return container
+}
+
+func SetRedis(re redis.Conn, mail string, check string, time string) error {
+	_, err := re.Do("SET", "mail", mail, "EX", time)
+	if err != nil {
+		fmt.Println("redis set failed:", err)
+		return err
+	}
+	_, err = re.Do("SET", "check", check, "EX", time)
+	if err != nil {
+		fmt.Println("redis set failed:", err)
+		return err
+	}
+	fmt.Println("set-redis success")
+	return nil
+}
+
+func FindRedis(re redis.Conn, mail string, check string) (bool, error) {
+	m, err := redis.String(re.Do("GET", "mail"))
+	if err != nil {
+		fmt.Println("redis get failed:", err)
+		return false, err
+	}
+	c, err := redis.String(re.Do("GET", "check"))
+	if err != nil {
+		fmt.Println("redis get failed:", err)
+		return false, err
+	}
+	if mail == m && c == check {
+		return true, nil
+	}
+	return false, nil
 }
 
 func SendMail(mailTo string, subject string, body string) error {
-	//定义邮箱服务器连接信息，如果是网易邮箱 pass填密码，qq邮箱填授权码:sltdozgngjeacigf
+	//定义邮箱服务器连接信息，如果是网易邮箱 pass填密码，qq邮箱填授权码
 	//mailConn := map[string]string{
 	//  "user": "xxx@163.com",
 	//  "pass": "your password",
@@ -101,10 +193,10 @@ func SendMail(mailTo string, subject string, body string) error {
 	//  "port": "465",
 	//}
 	mailConn := map[string]string{
-		"user": "3250237515@qq.com",
-		"pass": "sltdozgngjeacigf",
-		"host": "smtp.qq.com",
-		"port": "587",
+		"user": Info.MailName,
+		"pass": Info.MainAuth,
+		"host": Info.MailHost,
+		"port": Info.MailPort,
 	}
 
 	port, _ := strconv.Atoi(mailConn["port"]) //转换端口类型为int

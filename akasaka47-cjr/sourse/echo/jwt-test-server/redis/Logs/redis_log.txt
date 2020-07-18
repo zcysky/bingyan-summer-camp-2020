@@ -1,3 +1,0 @@
-[22216] 17 Jul 21:32:59.241 * Redis 3.0.504 (00000000/0) 64 bit, standalone mode, port 6379, pid 22216 ready to start.
-[22216] 17 Jul 21:32:59.679 # Server started, Redis version 3.0.504
-[22216] 17 Jul 21:32:59.680 * The server is now ready to accept connections on port 6379
