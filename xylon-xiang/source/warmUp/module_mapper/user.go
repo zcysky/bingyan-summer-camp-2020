@@ -10,6 +10,6 @@ type User struct {
 }
 
 type RegisterUser struct {
-	RegisterCode string
+	RegisterCode string `json:"register_code"`
 	User
 }

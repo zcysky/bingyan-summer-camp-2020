@@ -9,7 +9,7 @@ import (
 	"warmUp/service"
 )
 
-func GetUserInfoController(e *echo.Group) {
+func GetUserInfoController(e *echo.Echo) {
 
 	e.GET("/user/:id", getUserInfo)
 
@@ -23,9 +23,9 @@ func getAllUserInfo(context echo.Context) error {
 	claims := token.Claims.(jwt.MapClaims)
 	hostId := claims["host_id"].(string)
 
-	auth, result, err:= service.GetUserInfoService(true, hostId, "")
+	auth, result, err := service.GetUserInfoService(true, hostId, "")
 	if err != nil {
-		if err == mongo.ErrNoDocuments{
+		if err == mongo.ErrNoDocuments {
 			return context.String(http.StatusNotFound, "no such resource")
 		}
 
@@ -33,7 +33,7 @@ func getAllUserInfo(context echo.Context) error {
 
 	}
 
-	if !auth{
+	if !auth {
 		return context.String(http.StatusUnauthorized, "go away, you are not a admin")
 	}
 
@@ -43,13 +43,14 @@ func getAllUserInfo(context echo.Context) error {
 }
 
 func getUserInfo(context echo.Context) error {
-	token := context.Get("user").(*jwt.Token)
+	user := context.Get("user")
+	token := user.(*jwt.Token)
 	claims := token.Claims.(jwt.MapClaims)
 	hostId := claims["host_id"].(string)
 
-	auth, result, err:= service.GetUserInfoService(false, hostId, "")
+	auth, result, err := service.GetUserInfoService(false, hostId, "")
 	if err != nil {
-		if err == mongo.ErrNilDocument{
+		if err == mongo.ErrNilDocument {
 			return context.String(http.StatusNotFound, "no such resource")
 		}
 
@@ -57,7 +58,7 @@ func getUserInfo(context echo.Context) error {
 
 	}
 
-	if !auth{
+	if !auth {
 		return context.String(http.StatusUnauthorized, "go away, you are not a admin")
 	}
 

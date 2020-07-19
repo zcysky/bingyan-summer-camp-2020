@@ -7,14 +7,14 @@ import (
 	"warmUp/service"
 )
 
-func UpdateUserInfoController(e *echo.Group) {
+func UpdateUserInfoController(e *echo.Echo) {
 	e.PUT("/user/:id", updateUserInfo)
 
 }
 
 func updateUserInfo(context echo.Context) error {
 	userInfo := new(module_mapper.User)
-	if err := context.Bind(userInfo); err != nil{
+	if err := context.Bind(userInfo); err != nil {
 		return context.String(http.StatusInternalServerError, "bind error")
 	}
 

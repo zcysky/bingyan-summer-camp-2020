@@ -10,8 +10,8 @@ func FindMapper(name string, i string, all bool) (interface{}, error) {
 
 	if !all {
 		var result User
-		err := UserCol.FindOne(context.TODO(), bson.M{
-			name: i,
+		err := UserCol.FindOne(context.TODO(), bson.D{
+			{name, i},
 		}).Decode(&result)
 		if err != nil {
 			return nil, err
@@ -26,11 +26,11 @@ func FindMapper(name string, i string, all bool) (interface{}, error) {
 		}
 		defer cur.Close(context.TODO())
 
-		for cur.Next(context.TODO()){
+		for cur.Next(context.TODO()) {
 			var element User
 
 			err := cur.Decode(&element)
-			if err != nil{
+			if err != nil {
 				return nil, err
 			}
 

@@ -8,7 +8,7 @@ import (
 	"warmUp/service"
 )
 
-func DeleteUserController(e *echo.Group) {
+func DeleteUserController(e *echo.Echo) {
 
 	e.DELETE("/user/:id", deleteUser)
 }
