@@ -13,8 +13,10 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
+//the data format of jwt payload is json
 func GernerateToker(c echo.Context) error {
 	token := jwt.New(jwt.SigningMethodHS256)
+	//generate uuid
 	uid, err := uuid.NewV4()
 	if err != nil {
 		return err
