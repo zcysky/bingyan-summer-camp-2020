@@ -10,6 +10,11 @@ func UpdateMapper(user User) {
 	opts := options.FindOneAndUpdate().SetUpsert(true)
 	filter := bson.D{{"id", user.ID}}
 
+	var result User
+	_ = UserCol.FindOne(context.TODO(), bson.D{
+		{"id", user.ID},
+	}).Decode(&result)
+
 	//update := bson.D{{"$set", bson.D{}}
 	update := bson.D{{"$set", bson.D{
 		{"id", user.ID},
@@ -17,6 +22,7 @@ func UpdateMapper(user User) {
 		{"password", user.Password},
 		{"phone", user.Phone},
 		{"email", user.Email},
+		{"admin", result.Admin},
 	}}}
 
 	UserCol.FindOneAndUpdate(context.TODO(), filter, update, opts)
