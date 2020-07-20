@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"warmUp/module_mapper"
 	"warmUp/service"
+	"warmUp/util"
 )
 
 func UpdateUserInfoController(e *echo.Echo) {
@@ -17,6 +18,8 @@ func updateUserInfo(context echo.Context) error {
 	if err := context.Bind(userInfo); err != nil {
 		return context.String(http.StatusInternalServerError, "bind error")
 	}
+
+	userInfo.Password = util.Encrypt(userInfo.Password)
 
 	service.UpdateUserInfo(*userInfo)
 

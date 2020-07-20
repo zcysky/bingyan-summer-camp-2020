@@ -32,11 +32,16 @@ type MailConfig struct {
 	MailPort    int    `json:"mail_port"`
 }
 
+type EncryptConfig struct {
+	Secret string `json:"secret"`
+}
+
 type ConfigObject struct {
 	DataBase DatabaseConfig `json:"data_base"`
 	JWT      JWTConfig      `json:"jwt"`
 	Redis    RedisConfig    `json:"redis"`
 	Mail     MailConfig     `json:"mail"`
+	Encrypt  EncryptConfig  `json:"encrypt"`
 }
 
 var Config ConfigObject

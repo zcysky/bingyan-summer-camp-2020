@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"warmUp/module_mapper"
 	"warmUp/service"
+	"warmUp/util"
 )
 
 func RegisterController(e *echo.Echo) {
@@ -20,6 +21,8 @@ func register(context echo.Context) error {
 	if err := context.Bind(registerUserInfo); err != nil {
 		return context.String(http.StatusInternalServerError, "bind error")
 	}
+
+	registerUserInfo.Password = util.Encrypt(registerUserInfo.Password)
 
 	registerUserInfo.RegisterCode = context.FormValue("register_code")
 
