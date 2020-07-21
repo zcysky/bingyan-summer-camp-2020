@@ -1,11 +1,14 @@
 package main
 
 import (
+	"JWT/config"
 	"JWT/controller"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	config.Init()
+
 	r := gin.Default()
 
 	//获取token

@@ -12,9 +12,9 @@ type ConfigStruct struct {
 
 var Config ConfigStruct
 
-func init() {
+func Init() {
 	//解析配置文件config.json
-	configFile, err := ioutil.ReadFile("./config/config.json")
+	configFile, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		panic(err)
 	}
