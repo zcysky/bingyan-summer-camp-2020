@@ -10,8 +10,6 @@ import (
 	"net/mail"
 	"net/smtp"
 	"os"
-
-	"github.com/satori/go.uuid"
 )
 
 func SendEmail(dest string, subject string, body string) (err error) {
@@ -81,21 +79,5 @@ func SendEmail(dest string, subject string, body string) (err error) {
 		return err
 	}
 	c.Quit()
-	return nil
-}
-
-func GenerateUUID() (err error) {
-
-	u1 := uuid.Must(uuid.NewV4(), err)
-	fmt.Printf("UUIDv4: %s\n", u1.String())
-
-	// Parsing UUID from string input
-	u2, err := uuid.FromString(u1.String())
-	if err != nil {
-		fmt.Printf("Something went wrong: %s", err)
-		return err
-	}
-	fmt.Printf("Successfully parsed: %s", u2)
-
 	return nil
 }
