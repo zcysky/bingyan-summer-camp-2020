@@ -55,7 +55,7 @@ type SMTPInfo struct {
 	Port     string `json:"port"`
 }
 
-// JsonToSignupForm coverts a SignupJsonForm to a SignupForm
+// JsonToSignupForm coverts a SignupJsonForm to a SignupForm.
 func JsonToSignupForm(jsonForm SignupJsonForm) (form SignupForm) {
 	form = SignupForm{
 		Username: jsonForm.Username,
