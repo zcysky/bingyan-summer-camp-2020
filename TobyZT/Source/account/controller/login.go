@@ -31,6 +31,7 @@ func Login(c *gin.Context) {
 	token, err := GenerateToken(id, admin)
 	if err != nil {
 		failLogin(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

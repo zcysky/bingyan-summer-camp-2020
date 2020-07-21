@@ -5,7 +5,6 @@ package controller
 import (
 	"account/model"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -17,7 +16,8 @@ func QueryAllUsers(c *gin.Context) {
 	}
 	_, admin, valid, err := ParseToken(tokenStr[7:])
 	if err != nil {
-		log.Println(err)
+		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
+		return
 	}
 	if !valid || !admin {
 		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
@@ -62,7 +62,8 @@ func QueryOne(c *gin.Context) {
 	}
 	_, admin, valid, err := ParseToken(tokenStr[7:])
 	if err != nil {
-		log.Println(err)
+		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
+		return
 	}
 	if !valid || !admin {
 		failUpdate(c, http.StatusUnauthorized, "Unauthorized")

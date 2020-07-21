@@ -20,6 +20,7 @@ func Update(c *gin.Context) {
 	id, _, valid, err := ParseToken(tokenStr[7:])
 	if err != nil {
 		failUpdate(c, http.StatusBadRequest, err.Error())
+		return
 	}
 	if !valid {
 		failUpdate(c, http.StatusUnauthorized, "Unauthorized")

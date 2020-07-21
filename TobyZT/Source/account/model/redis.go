@@ -28,5 +28,6 @@ func GetKey(key string) (value string, err error) {
 	if err != nil {
 		return "", err
 	}
+	c.Do("DEL", key)
 	return value, nil
 }
