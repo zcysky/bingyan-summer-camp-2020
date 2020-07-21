@@ -51,6 +51,11 @@ func Signup(c *gin.Context) {
 			failSignup(c, http.StatusBadRequest, err.Error())
 			return
 		}
+		err = model.SetKey(form.Email, hash, 60)
+		if err != nil {
+			failSignup(c, http.StatusBadRequest, err.Error())
+			return
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"message":       "Verification email sent",
 			"status":        http.StatusOK,
@@ -60,22 +65,20 @@ func Signup(c *gin.Context) {
 	}
 
 	// Verify token in json
-	ans, err := SHA1Hash(form)
+	ans, err := model.GetKey(form.Email)
 	if err != nil {
 		failSignup(c, http.StatusBadRequest, err.Error())
 		return
 	}
 	if jsonForm.Token != ans {
-		failSignup(c,http.StatusUnauthorized,"Wrong token")
+		failSignup(c, http.StatusUnauthorized, "Wrong token")
 		return
 	}
 	// Sign up in database
 	id, err := model.SignupNew(form)
 
 	// Generate jwt
-	token, err := GenerateToken(model.TokenForm{
-		UserID: id, Email: form.Email, Password: form.Password,
-	})
+	token, err := GenerateToken(id, false)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message":       "success",
