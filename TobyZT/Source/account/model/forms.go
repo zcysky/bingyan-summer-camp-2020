@@ -37,12 +37,6 @@ type QueryForm struct {
 	Page  int `json:"page"`
 }
 
-type TokenForm struct {
-	UserID   string
-	Email    string
-	Password string
-}
-
 type JWTInfo struct {
 	Secret string `json:"secret"`
 	Expire int    `json:"expire"`
@@ -55,7 +49,7 @@ type SMTPInfo struct {
 	Port     string `json:"port"`
 }
 
-// JsonToSignupForm coverts a SignupJsonForm to a SignupForm.
+// JsonToSignupForm coverts a SignupJsonForm to a SignupForm
 func JsonToSignupForm(jsonForm SignupJsonForm) (form SignupForm) {
 	form = SignupForm{
 		Username: jsonForm.Username,

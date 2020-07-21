@@ -23,7 +23,7 @@
       "status": 200,
       "userid": "5f131a71252025084b9c1cc7"
       "admin": 1,
-      "Authorization": "bearer xxx"
+      "Authorization": "Bearer xxx"
   } 
   ```
 
@@ -59,7 +59,7 @@
   {
   	"message": "success",
   	"status": 201,
-  	"Authorization": "bearer xxx"
+  	"Authorization": "Bearer xxx"
   }
   ```
   
@@ -179,7 +179,7 @@
       "username": "yyhtql",
       "password": "",
       "phone": "",
-      "email": "",
+      "email": ""
   }
   ```
 
@@ -196,6 +196,5 @@
 
   > status 201表示修改成功，401表示认证失败
   >
-  > 修改成功后，JSON会附有新的JWT令牌
 
 

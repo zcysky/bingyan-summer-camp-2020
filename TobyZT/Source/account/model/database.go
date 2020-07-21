@@ -1,8 +1,9 @@
-/* This file contains a series of functions to interact with database. */
+/* This file contains a series of functions to interact with database */
 package model
 
 import (
 	"context"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"time"
@@ -117,6 +118,11 @@ func Update(newForm SignupForm, id string) (err error) {
 		return err
 	}
 	filter := bson.M{"_id": objID}
+	var target User
+	col.FindOne(context.TODO(),filter).Decode(&target)
+	if target.Email != newForm.Email {
+		return fmt.Errorf("unable to update email")
+	}
 	_, err = col.UpdateOne(context.TODO(), filter, bson.M{"$set": newForm})
 	return err
 }
@@ -153,21 +159,26 @@ func QueryOne(id string) (user User, err error) {
 	return user, nil
 }
 
-func QueryAll(limit int, page int) (users []User, err error) {
+func QueryAll(limit int, page int) (users []User, total int64, err error) {
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Println(err)
+	}
 	col := client.Database("users").Collection("users")
-	cur, err := col.Find(context.TODO(), nil)
-	if err != nil || cur == nil {
-		return users, err
-	}
+	total, err = col.CountDocuments(context.TODO(), bson.M{})
 
-	for cur.Next(context.TODO()) {
-		var user User
-		err := cur.Decode(&user)
-		if err != nil {
-			return []User{}, err
-		}
-		users = append(users, user)
+	if err != nil {
+		return users, 0, err
 	}
-	// -------- Not complete yet ---------
-	return users, nil
+	opts := options.Find().SetLimit(int64(limit))
+	opts.SetSkip(int64((page - 1) * limit))
+	cur, err := col.Find(context.TODO(), bson.M{}, opts)
+	if err != nil || cur == nil {
+		return users, total, err
+	}
+	err = cur.All(context.TODO(), &users)
+	if err != nil {
+		return users, total, err
+	}
+	return users, total, nil
 }
