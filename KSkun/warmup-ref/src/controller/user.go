@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/base64"
 	"github.com/labstack/echo"
+	"go.mongodb.org/mongo-driver/bson"
 	"net/http"
 	"warmup-ref/config"
 	"warmup-ref/model"
@@ -134,7 +135,7 @@ func UserVerify(context echo.Context) error {
 		return util.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 	}
 
-	err = model.UpdateUser(param.ID, map[string]interface{}{"verified": true})
+	err = model.UpdateUser(param.ID, bson.M{"verified": true})
 	if err != nil {
 		return util.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 	}
@@ -164,7 +165,7 @@ func UserUpdateInfo(context echo.Context) error {
 		return util.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 	}
 
-	info := make(map[string]interface{})
+	info := make(bson.M)
 	if param.Username != "" {
 		_, found, err := model.GetUserWithUsername(param.Username)
 		if err != nil {
@@ -276,14 +277,14 @@ func UserGetInfo(context echo.Context) error {
 		result = users
 	}
 
-	response := make([]map[string]string, 0)
+	response := make([]echo.Map, 0)
 	for _, user := range result {
-		response = append(response, map[string]string{
+		response = append(response, echo.Map{
 			"_id":      user.ID.Hex(),
 			"username": user.Username,
 			"phone":    user.Phone,
 			"email":    user.Email,
 		})
 	}
-	return util.SuccessResponse(context, http.StatusOK, map[string]interface{}{"result": response})
+	return util.SuccessResponse(context, http.StatusOK, echo.Map{"result": response})
 }
