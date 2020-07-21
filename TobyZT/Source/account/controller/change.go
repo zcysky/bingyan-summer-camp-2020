@@ -13,30 +13,19 @@ import (
 func Update(c *gin.Context) {
 	// verify jwt
 	tokenStr := c.Request.Header.Get("Authorization")
-	if tokenStr == "" {
+	if tokenStr == "" || len(tokenStr) < 7 {
 		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-	tokenForm, valid, err := ParseToken(tokenStr[7:])
-	if err != nil {
-		log.Println(err)
-	}
-	if !valid {
-		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
-	valid, _, id, err := model.VerifyLogin(model.LoginForm{
-		Email:    tokenForm.Email,
-		Password: tokenForm.Password,
-	})
+	id, _, valid, err := ParseToken(tokenStr[7:])
 	if err != nil {
 		failUpdate(c, http.StatusBadRequest, err.Error())
-		return
 	}
 	if !valid {
 		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
+
 	var newForm model.SignupForm
 	err = c.BindJSON(&newForm)
 	if err != nil {
@@ -49,48 +38,31 @@ func Update(c *gin.Context) {
 		failUpdate(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	token, err := GenerateToken(model.TokenForm{
-		UserID: id, Email: newForm.Email, Password: newForm.Password,
-	})
-	if err != nil {
-		failUpdate(c, http.StatusBadRequest, "Failed to generate jwt")
-	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message":       "success",
-		"status":        http.StatusCreated,
-		"Authorization": "bearer " + token,
+		"message": "success",
+		"status":  http.StatusCreated,
 	})
 }
 
 // Delete handles request of deleting user by admin account
 func Delete(c *gin.Context) {
 	tokenStr := c.Request.Header.Get("Authorization")
-	if tokenStr == "" {
+	if tokenStr == "" || len(tokenStr) < 7 {
 		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-	tokenForm, valid, err := ParseToken(tokenStr[7:])
+	_, admin, valid, err := ParseToken(tokenStr[7:])
 	if err != nil {
 		log.Println(err)
-	}
-	if !valid {
-		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
-	valid, admin, _, err := model.VerifyLogin(model.LoginForm{
-		Email:    tokenForm.Email,
-		Password: tokenForm.Password,
-	})
-	if err != nil {
-		failUpdate(c, http.StatusBadRequest, err.Error())
-		return
 	}
 	if !valid || !admin {
 		failUpdate(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
+
 	userid := c.Param("userid")
+
 	err = model.Delete(userid)
 	if err != nil {
 		failUpdate(c, http.StatusBadRequest, err.Error())
