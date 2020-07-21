@@ -28,9 +28,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := GenerateToken(model.TokenForm{
-		UserID: id, Email: form.Email, Password: form.Password,
-	})
+	token, err := GenerateToken(id, admin)
 	if err != nil {
 		failLogin(c, http.StatusBadRequest, err.Error())
 	}
@@ -49,7 +47,7 @@ func failLogin(c *gin.Context, status int, msg string) {
 		"message":       msg,
 		"status":        status,
 		"userid":        "",
-		"admin":         0,
+		"admin":         false,
 		"Authorization": "",
 	})
 }
