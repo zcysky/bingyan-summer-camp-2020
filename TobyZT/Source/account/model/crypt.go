@@ -1,4 +1,4 @@
-/* This file contains functions to encrypt and decrypt passwords */
+/* This file contains functions to encrypt and decrypt passwords. */
 
 package model
 
