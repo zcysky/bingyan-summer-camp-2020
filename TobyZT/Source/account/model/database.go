@@ -3,6 +3,7 @@ package model
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"time"
 
@@ -48,7 +49,7 @@ func VerifyLogin(form LoginForm) (valid bool, admin bool, id string, err error) 
 	filter := bson.M{"email": form.Email}
 	var res User
 	col.FindOne(context.TODO(), filter).Decode(&res)
-	if res.Email != "" && res.Password == Encrypt(form.Password) {
+	if res.Email != "" && Compare(res.Password, form.Password) {
 		return true, true, res.UserID.Hex(), nil
 	}
 
@@ -58,7 +59,7 @@ func VerifyLogin(form LoginForm) (valid bool, admin bool, id string, err error) 
 	if res.Email == "" {
 		return false, false, "", nil
 	}
-	if res.Password != Encrypt(form.Password) {
+	if !Compare(res.Password, form.Password) {
 		return false, false, "", err
 	}
 	return true, false, res.UserID.Hex(), nil
@@ -66,34 +67,107 @@ func VerifyLogin(form LoginForm) (valid bool, admin bool, id string, err error) 
 
 // SignupNew accepts a SignupForm and detects if the account already exists
 // If not, it sign up a new account in the database
-func SignupNew(form SignupForm) (exist bool, err error) {
+func SignupNew(form SignupForm) (id string, err error) {
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	col := client.Database("users").Collection("users")
+	form.Password = Encrypt(form.Password)
+	ObjID, err := col.InsertOne(context.TODO(), form)
+	if ObjID != nil {
+		id = ObjID.InsertedID.(primitive.ObjectID).Hex()
+	}
+
+	if err != nil {
+		return "", err
+	}
+	return "", nil
+}
+
+func AccountExist(email string) (exist bool, err error) {
 	err = client.Ping(context.TODO(), nil)
 	if err != nil {
 		log.Println(err)
 		return false, err
 	}
+
 	col := client.Database("users").Collection("users")
-	filter := bson.M{"email": form.Email}
+	filter := bson.M{"email": email}
 	var res User
-	err = col.FindOne(context.TODO(), filter).Decode(&res)
+	col.FindOne(context.TODO(), filter).Decode(&res)
 	if res.Email != "" {
 		return true, nil
-	}
-	newUser := bson.M{
-		"username": form.Username,
-		"password": Encrypt(form.Password),
-		"phone":    form.Phone,
-		"email":    form.Email,
-	}
-	_, err = col.InsertOne(context.TODO(), newUser)
-	if err != nil {
-		log.Println(err)
-		return false, err
 	}
 	return false, nil
 }
 
-// Update accepts a UpdateForm and detects if the account already exists
-func Update(form SignupForm) (err error) {
+// Update aids to update info in the database
+func Update(newForm SignupForm, id string) (err error) {
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 
+	col := client.Database("users").Collection("users")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{"_id": objID}
+	_, err = col.UpdateOne(context.TODO(), filter, bson.M{"$set": newForm})
+	return err
+}
+
+// Delete accepts an userID and delete relative record in the database
+func Delete(id string) (err error) {
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	col := client.Database("users").Collection("users")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	filter := bson.M{"_id": objID}
+	_, err = col.DeleteOne(context.TODO(), filter)
+	return err
+}
+
+func QueryOne(id string) (user User, err error) {
+	col := client.Database("users").Collection("users")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return user, err
+	}
+	filter := bson.M{"_id": objID}
+	err = col.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func QueryAll(limit int, page int) (users []User, err error) {
+	col := client.Database("users").Collection("users")
+	cur, err := col.Find(context.TODO(), nil)
+	if err != nil || cur == nil {
+		return users, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var user User
+		err := cur.Decode(&user)
+		if err != nil {
+			return []User{}, err
+		}
+		users = append(users, user)
+	}
+	// -------- Not complete yet ---------
+	return users, nil
 }

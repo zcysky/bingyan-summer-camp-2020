@@ -15,12 +15,15 @@ import (
 
 // GenerateToken accepts a LoginForm struct and generate a jwt
 func GenerateToken(form model.TokenForm) (tokenStr string, err error) {
-	var jsonInfo model.JsonInfo
-	ParseJson("config/config.json", &jsonInfo)
+	var jwtInfo model.JWTInfo
+	err = ParseJson("config/jwt.json", &jwtInfo)
+	if err != nil {
+		return "", err
+	}
 
 	//t1 = now, t2 = now + exp
 	t1 := time.Now().Unix()
-	t2 := time.Now().Add(time.Minute * time.Duration(jsonInfo.Expire)).Unix()
+	t2 := time.Now().Add(time.Minute * time.Duration(jwtInfo.Expire)).Unix()
 	claims := jwt.MapClaims{
 		"userid":   form.UserID,
 		"email":    form.Email,
@@ -29,9 +32,8 @@ func GenerateToken(form model.TokenForm) (tokenStr string, err error) {
 		"nbf":      t1,
 		"exp":      t2,
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenStr, err = token.SignedString([]byte(jsonInfo.Secret))
+	tokenStr, err = token.SignedString([]byte(jwtInfo.Secret))
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -41,10 +43,13 @@ func GenerateToken(form model.TokenForm) (tokenStr string, err error) {
 
 // ParseToken accepts a jwt string and decrypts it
 func ParseToken(tokenStr string) (form model.TokenForm, valid bool, err error) {
-	var jsonInfo model.JsonInfo
-	ParseJson("config/config.json", &jsonInfo)
+	var jwtInfo model.JWTInfo
+	err = ParseJson("config/jwt.json", &jwtInfo)
+	if err != nil {
+		return form, false, err
+	}
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		return []byte(jsonInfo.Secret), nil
+		return []byte(jwtInfo.Secret), nil
 	})
 	if err != nil {
 		return form, false, err
@@ -63,19 +68,20 @@ func ParseToken(tokenStr string) (form model.TokenForm, valid bool, err error) {
 }
 
 // ParseJson reads a json file from a particular path
-// and binds it to JsonInfo variables
-func ParseJson(path string, jsonInfo *model.JsonInfo) {
+// and binds it to JWTInfo variables
+func ParseJson(path string, jwtInfo *model.JWTInfo) (err error) {
 	f, err := os.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	var contents []byte
 	contents, err = ioutil.ReadAll(f)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	err = json.Unmarshal(contents, jsonInfo)
+	err = json.Unmarshal(contents, jwtInfo)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }

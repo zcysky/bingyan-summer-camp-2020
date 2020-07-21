@@ -10,13 +10,19 @@ import (
 // and then return the pointer of the engine
 func InitRouter() *gin.Engine {
 	router := gin.Default()
+	userGroup := router.Group("/api/v1")
+	{
+		userGroup.POST("/login", controller.Login)
+		userGroup.POST("/signup", controller.Signup)
+		userGroup.PUT("/users", controller.Update)
+	}
 
-	router.POST("api/v1/login", controller.Login)
-	router.POST("api/v1/signup", controller.Signup)
-	router.GET("api/v1/users", controller.QueryAllUsers)
-	router.GET("api/v1/users/:userid", controller.QueryOne)
-	router.DELETE("api/v1/users/:userid", controller.Delete)
-	router.PUT("api/v1/users/:userid", controller.Update)
+	adminGroup := router.Group("/api/v1")
+	{
+		adminGroup.GET("/users", controller.QueryAllUsers)
+		adminGroup.GET("/users/:userid", controller.QueryOne)
+		adminGroup.DELETE("/users/:userid", controller.Delete)
+	}
 
 	return router
 }
