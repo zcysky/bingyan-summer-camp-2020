@@ -14,7 +14,7 @@ import (
 )
 
 // GenerateToken accepts a LoginForm struct and generate a jwt
-func GenerateToken(form model.TokenForm) (tokenStr string, err error) {
+func GenerateToken(userid string, admin bool) (tokenStr string, err error) {
 	var jwtInfo model.JWTInfo
 	err = ParseJson("config/jwt.json", &jwtInfo)
 	if err != nil {
@@ -25,12 +25,11 @@ func GenerateToken(form model.TokenForm) (tokenStr string, err error) {
 	t1 := time.Now().Unix()
 	t2 := time.Now().Add(time.Minute * time.Duration(jwtInfo.Expire)).Unix()
 	claims := jwt.MapClaims{
-		"userid":   form.UserID,
-		"email":    form.Email,
-		"password": form.Password,
-		"iat":      t1,
-		"nbf":      t1,
-		"exp":      t2,
+		"userid": userid,
+		"admin":  admin,
+		"iat":    t1,
+		"nbf":    t1,
+		"exp":    t2,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenStr, err = token.SignedString([]byte(jwtInfo.Secret))
@@ -42,29 +41,24 @@ func GenerateToken(form model.TokenForm) (tokenStr string, err error) {
 }
 
 // ParseToken accepts a jwt string and decrypts it
-func ParseToken(tokenStr string) (form model.TokenForm, valid bool, err error) {
+func ParseToken(tokenStr string) (userid string, admin bool, valid bool, err error) {
 	var jwtInfo model.JWTInfo
 	err = ParseJson("config/jwt.json", &jwtInfo)
 	if err != nil {
-		return form, false, err
+		return "", false, false, err
 	}
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtInfo.Secret), nil
 	})
 	if err != nil {
-		return form, false, err
+		return "", false, false, err
 	}
 	if !token.Valid {
 		log.Println("Invalid")
-		return form, false, nil
+		return "", false, false, nil
 	}
 	claim, _ := token.Claims.(jwt.MapClaims)
-	form = model.TokenForm{
-		UserID:   claim["userid"].(string),
-		Email:    claim["email"].(string),
-		Password: claim["password"].(string),
-	}
-	return form, true, nil
+	return claim["userid"].(string), claim["admin"].(bool), true, nil
 }
 
 // ParseJson reads a json file from a particular path
