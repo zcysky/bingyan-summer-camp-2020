@@ -1,4 +1,4 @@
-/* This file contains a series of functions to interact with database */
+/* This file contains a series of functions to interact with database. */
 package model
 
 import (
