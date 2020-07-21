@@ -10,8 +10,8 @@ import (
 )
 
 type paramUserGetToken struct {
-	Username string `query:"username" validator:"required"`
-	Password string `query:"password" validator:"required"`
+	Username string `query:"username" validate:"required"`
+	Password string `query:"password" validate:"required"`
 }
 
 type responseUserGetToken struct {
@@ -53,10 +53,10 @@ func UserGetToken(context echo.Context) error {
 }
 
 type paramUserRegister struct {
-	Username string `json:"username" validator:"required"`
-	Password string `json:"password" validator:"required"`
-	Phone    string `json:"phone" validator:"required,numeric"`
-	Email    string `json:"email" validator:"required,email"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Phone    string `json:"phone" validate:"required,numeric"`
+	Email    string `json:"email" validate:"required,email"`
 }
 
 type responseUserRegister struct {
@@ -106,8 +106,8 @@ func UserRegister(context echo.Context) error {
 }
 
 type paramUserVerify struct {
-	ID   string `json:"_id" validator:"required"`
-	Code string `json:"code" validator:"required"`
+	ID   string `json:"_id" validate:"required"`
+	Code string `json:"code" validate:"required"`
 }
 
 func UserVerify(context echo.Context) error {
@@ -142,11 +142,11 @@ func UserVerify(context echo.Context) error {
 }
 
 type paramUserUpdateInfo struct {
-	ID       string `json:"_id" validator:"required"`
+	ID       string `json:"_id" validate:"required"`
 	Username string `json:"username"`
 	Password string `json:"password"`
-	Phone    string `json:"phone" validator:"omitempty,numeric"`
-	Email    string `json:"email" validator:"omitempty,email"`
+	Phone    string `json:"phone" validate:"omitempty,numeric"`
+	Email    string `json:"email" validate:"omitempty,email"`
 }
 
 func UserUpdateInfo(context echo.Context) error {
@@ -158,13 +158,19 @@ func UserUpdateInfo(context echo.Context) error {
 		return util.ErrorResponse(context, http.StatusBadRequest, err.Error())
 	}
 
+	id := util.MustGetIDFromContext(context)
+	user, _, err := model.GetUserWithID(id)
+	if err != nil {
+		return util.ErrorResponse(context, http.StatusInternalServerError, err.Error())
+	}
+
 	info := make(map[string]interface{})
 	if param.Username != "" {
 		_, found, err := model.GetUserWithUsername(param.Username)
 		if err != nil {
 			return util.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 		}
-		if found {
+		if param.Username != user.Username && found {
 			return util.ErrorResponse(context, http.StatusBadRequest, "username already exists")
 		}
 		info["username"] = param.Username
@@ -189,7 +195,7 @@ func UserUpdateInfo(context echo.Context) error {
 		info["phone"] = param.Phone
 	}
 
-	err := model.UpdateUser(param.ID, info)
+	err = model.UpdateUser(param.ID, info)
 	if err != nil {
 		return util.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 	}
@@ -197,7 +203,7 @@ func UserUpdateInfo(context echo.Context) error {
 }
 
 type paramUserDelete struct {
-	ID string `query:"_id" validator:"required"`
+	ID string `query:"_id" validate:"required"`
 }
 
 func UserDelete(context echo.Context) error {
