@@ -1,0 +1,11 @@
+{
+  "app": {
+    "address": "127.0.0.1:23333",
+    "access_token": "bYqQbOt@s5Ea"
+  },
+  "mongo": {
+    "address": "127.0.0.1",
+    "port": 27017,
+    "database": "qq-bot-backend"
+  }
+}
