@@ -81,3 +81,16 @@
 [GitHub 使用`gorose orm` + `gin`框架进行开发的用户增删改查](https://github.com/gohouse/goroseGin)
 
 [知乎 如何加密传输和存储用户密码](https://zhuanlan.zhihu.com/p/36603247)
+
+## 0722
+
+### 学习内容
+
+1. 学习docker基本知识
+2. 学习golang中如何使用md5加密
+
+### 参考资料
+
+[docker 从入门到实践](https://yeasy.gitbook.io/docker_practice)
+
+[package md5](https://golang.org/pkg/crypto/md5/)
