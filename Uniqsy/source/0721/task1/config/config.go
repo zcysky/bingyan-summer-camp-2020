@@ -6,14 +6,12 @@ import (
 )
 
 type ConfigStruct struct {
-	Secret			string	`json:"secret"`
-	EffectivTime	int		`json:"effectiv_time"`
+	Secret 	string	`json:"secret"`
 }
 
 var Config ConfigStruct
 
-func Init() {
-	//解析配置文件config.json
+func init() {
 	configFile, err := ioutil.ReadFile("./config.json")
 	if err != nil {
 		panic(err)
