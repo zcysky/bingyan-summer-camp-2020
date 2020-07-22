@@ -3,8 +3,10 @@
 #### 注册（普通用户）
 
 ```
-POST /register-form
+POST /register-form?id= & code=
 主体数据{"id":string , "pwd":string , "nickname":string ,"phone":string , "email":string}
+在id为空时，需要邮箱发送验证码，返回生成的uid
+id不为空，检查验证码，无误后向数据库添加用户
 ```
 
 #### 登录

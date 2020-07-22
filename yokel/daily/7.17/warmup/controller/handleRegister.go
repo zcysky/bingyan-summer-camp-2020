@@ -11,11 +11,12 @@ import (
 	"warmup/config"
 	"warmup/model"
 )
+
 const (
 	myEmailAddress  = "1426742045@qq.com"
-	myEmailPassword = "srmijpjdltokigca"
+	myEmailPassword = "ixifyeaiuxvkicjh"
 	SMTPServer      = "smtp.qq.com"
-	SMTPServerPort  = 25
+	SMTPServerPort  = 465
 )
 
 func SendEmailVerification(email string, verificationCode string) error {
@@ -43,7 +44,7 @@ func HandleRegister(c echo.Context) error {
 	}
 	newUserUid := c.QueryParam("id")
 	newUserCode := c.QueryParam("code")
-	if newUserUid != "" {//新用户验证，数据库添加新用户
+	if newUserUid != "" { //新用户验证，数据库添加新用户
 		newUserExist, err := model.ExistUser(newUserUid)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "redis库错误")
@@ -52,11 +53,11 @@ func HandleRegister(c echo.Context) error {
 			return c.String(http.StatusBadRequest, "用户不存在")
 		}
 
-		newUserCodeInDataBase,err:=model.FindCode(newUserUid)
+		newUserCodeInDataBase, err := model.FindCode(newUserUid)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "redis库错误")
 		}
-		if(newUserCodeInDataBase!=newUserCode){
+		if newUserCodeInDataBase != newUserCode {
 			return c.String(http.StatusBadRequest, "邮件验证失败")
 		}
 
@@ -70,13 +71,13 @@ func HandleRegister(c echo.Context) error {
 
 		//在用户成功注册后删除邮件验证码
 
-		err=model.DeleteCode(newUserUid)
+		err = model.DeleteCode(newUserUid)
 		return c.JSON(http.StatusOK, registerInfo)
 	} else {
 		tmpUid := uuid.NewV4().String()
 		verificationCode := rand.Int()
-		err:=model.AddCode(tmpUid,verificationCode)
-		if(err!=nil){
+		err := model.AddCode(tmpUid, verificationCode)
+		if err != nil {
 			return c.String(http.StatusInternalServerError, "redis库错误")
 		}
 		err = SendEmailVerification(registerInfo.Email, strconv.Itoa(verificationCode))

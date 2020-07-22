@@ -37,7 +37,7 @@ var Config ConfigObject
 
 const (
 	fileAddress = "./config/config.json"
-	RedisExpirationTime=600
+	RedisExpirationTime=3600
 )
 
 func init() {

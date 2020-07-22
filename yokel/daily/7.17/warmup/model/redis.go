@@ -1,17 +1,25 @@
 package model
 
 import (
+	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"warmup/config"
 )
 
-func FindCode(uid string) (string, error) {
-	redisDataBase, err := redis.Dial("tcp", "127.0.0.1:6379")
+var RedisClient redis.Conn
+
+func ConnectRedisDataBase() error {
+	var err error
+	RedisClient, err = redis.Dial("tcp", "127.0.0.1:6379")
+	fmt.Println("->>>>>>>>>>>>>>>>>",RedisClient)
 	if err != nil {
-		return "", err
+		return  err
 	}
-	defer redisDataBase.Close()
-	code, err := redis.String(redisDataBase.Do("GET", uid))
+	return nil
+}
+
+func FindCode(uid string) (string, error) {
+	code, err := redis.String(RedisClient.Do("GET", uid))
 	if err != nil {
 		return "", err
 	}
@@ -19,12 +27,7 @@ func FindCode(uid string) (string, error) {
 }
 
 func InsertCode(uid string, code string) error {
-	redisDataBase, err := redis.Dial("tcp", "127.0.0.1:6379")
-	if err != nil {
-		return err
-	}
-	defer redisDataBase.Close()
-	_, err = redisDataBase.Do("SET", uid, code)
+	_, err := RedisClient.Do("SET", uid, code)
 	if err != nil {
 		return err
 	}
@@ -32,12 +35,7 @@ func InsertCode(uid string, code string) error {
 }
 
 func ExistUser(uid string) (bool, error) {
-	redisDataBase, err := redis.Dial("tcp", "127.0.0.1:6379")
-	if err != nil {
-		return false, err
-	}
-	defer redisDataBase.Close()
-	uidExist, err := redis.Bool(redisDataBase.Do("EXISTS", uid))
+	uidExist, err := redis.Bool(RedisClient.Do("EXISTS", uid))
 	if err != nil {
 		return false, nil
 	}
@@ -45,25 +43,15 @@ func ExistUser(uid string) (bool, error) {
 }
 
 func DeleteCode(uid string) error {
-	redisDataBase, err := redis.Dial("tcp", "127.0.0.1:6379")
-	if err != nil {
-		return err
-	}
-	defer redisDataBase.Close()
-	_, err = redisDataBase.Do("DEL", uid)
+	_, err := RedisClient.Do("DEL", uid)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func AddCode(uid string,code int)error{
-	redisDataBase, err := redis.Dial("tcp", "127.0.0.1:6379")
-	if err != nil {
-		return  err
-	}
-	defer redisDataBase.Close()
-	_, err = redisDataBase.Do("SET", uid,code,"EX",config.RedisExpirationTime)
+func AddCode(uid string, code int) error {
+	_, err := RedisClient.Do("SET", uid, code, "EX", config.RedisExpirationTime)
 	if err != nil {
 		return nil
 	}
