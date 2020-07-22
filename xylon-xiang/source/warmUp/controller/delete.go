@@ -1,24 +1,26 @@
 package controller
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
 	"net/http"
 	"warmUp/service"
 )
 
-func DeleteUserController(e *echo.Echo) error {
+func DeleteUserController(e *echo.Echo) {
 
 	e.DELETE("/user/:id", deleteUser)
-
-	return nil
 }
 
 func deleteUser(context echo.Context) error {
+	token := context.Get("token").(*jwt.Token)
+	claims := token.Claims.(jwt.MapClaims)
+	hostId := claims["host_id"].(string)
+
 	id := context.Param("id")
 
-	flag, err := service.DeleteUserService(id)
+	flag, err := service.DeleteUserService(hostId, id)
 	if err != nil {
 		if err == mongo.ErrNilDocument {
 			return context.String(http.StatusNotFound, "no such id")
@@ -30,6 +32,6 @@ func deleteUser(context echo.Context) error {
 		return context.String(http.StatusUnauthorized, "You aren't a admin, and you can't do this")
 	}
 
-	return context.String(http.StatusOK, "you have delete the user")
+	return context.String(http.StatusOK, "you have delete the token")
 
 }

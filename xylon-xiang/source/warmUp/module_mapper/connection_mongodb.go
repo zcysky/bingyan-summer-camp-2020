@@ -27,3 +27,7 @@ func UserDB() error {
 
 	return nil
 }
+
+func init() {
+	_ = UserDB()
+}

@@ -1,50 +1,66 @@
 package config
 
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+)
+
 type DatabaseConfig struct {
-	DatabaseAddress    string
-	DatabaseName       string
-	CollectionUserName string
+	DatabaseAddress    string `json:"database_address"`
+	DatabaseName       string `json:"database_name"`
+	CollectionUserName string `json:"collection_user_name"`
 }
 
 type JWTConfig struct {
-	JWTSecret          string
-	JWTBackStageSecret string
-	JWTSigningMethod   string
-	JWTTokenLife       int32
+	JWTSecret        string `json:"jwt_secret"`
+	JWTSigningMethod string `json:"jwt_signing_method"`
+	JWTTokenLife     int64  `json:"jwt_token_life"`
 }
 
 type RedisConfig struct {
-	RedisAddress      string
-	RedisTokenLife    int32
-	RedisHistoryLimit int64
+	RedisAddress      string `json:"redis_address"`
+	RedisHistoryLimit int64  `json:"redis_history_limit"`
+}
+
+type MailConfig struct {
+	MailAddress string `json:"mail_address"`
+	SMTPAddress string `json:"smtp_address"`
+	Name        string `json:"name"`
+	Password    string `json:"password"`
+	MailPort    int    `json:"mail_port"`
+}
+
+type EncryptConfig struct {
+	Secret string `json:"secret"`
 }
 
 type ConfigObject struct {
-	DataBase DatabaseConfig
-	JWT      JWTConfig
-	Redis    RedisConfig
+	DataBase DatabaseConfig `json:"data_base"`
+	JWT      JWTConfig      `json:"jwt"`
+	Redis    RedisConfig    `json:"redis"`
+	Mail     MailConfig     `json:"mail"`
+	Encrypt  EncryptConfig  `json:"encrypt"`
 }
 
 var Config ConfigObject
 
 func init() {
-	databaseConfig := DatabaseConfig{
-		DatabaseAddress:    "mongodb://@localhost:27017",
-		DatabaseName:       "warmup",
-		CollectionUserName: "user",
+	jsonFile, err := os.Open("/home/legion-xylon/Projects/GitProjects/bingyan-summer-camp-2020/xylon-xiang/source/warmUp/config/config.json")
+	if err != nil {
+		fmt.Println(err)
 	}
+	// defer jsonFile.Close()
 
-	jwtConfig := JWTConfig{
-		JWTSigningMethod: "HS256",
-		JWTTokenLife:     4,
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		fmt.Println(err)
 	}
-
-	redisConfig := RedisConfig{
-		RedisTokenLife:    600,
-		RedisHistoryLimit: 6,
+	var config ConfigObject
+	err = json.Unmarshal(byteValue, &config)
+	Config = config
+	if err != nil {
+		fmt.Println(err)
 	}
-
-	Config.DataBase = databaseConfig
-	Config.JWT = jwtConfig
-	Config.Redis = redisConfig
 }

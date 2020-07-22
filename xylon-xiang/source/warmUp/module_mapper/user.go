@@ -8,3 +8,8 @@ type User struct {
 	Email    string
 	Admin    int
 }
+
+type RegisterUser struct {
+	RegisterCode string `json:"register_code"`
+	User
+}
