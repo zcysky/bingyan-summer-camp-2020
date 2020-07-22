@@ -72,5 +72,6 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-# config.json
-config/config.json
+# jwt.json
+config/jwt.json
+config/SMTP.json

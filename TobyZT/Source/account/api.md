@@ -16,17 +16,18 @@
   ```
   
   返回JSON数据示例：
-  
+
   ```json
   {
-  	"message": "success",
+	    "message": "success",
       "status": 200,
+      "userid": "5f131a71252025084b9c1cc7"
       "admin": 1,
-      "Authorization": "bearer xxx"
+      "Authorization": "Bearer xxx"
   } 
   ```
 
-   >  status 200 表示成功，401表示账号或密码错误，410表示用户不存在
+  >  status 200 表示成功，401表示账号或密码错误，410表示用户不存在
 
 
 
@@ -44,8 +45,13 @@
       "password": "",
       "phone": "",
       "email": "",
+      "token": ""
   }
   ```
+  
+  > token为空时，后端会向邮箱发送验证邮件，验证邮件包含token
+  >
+  > token不为空时，后端将对token进行验证，将数据存入数据库
   
   返回JSON数据示例：
   
@@ -53,17 +59,17 @@
   {
   	"message": "success",
   	"status": 201,
-  	"Authorization": "bearer xxx"
+  	"Authorization": "Bearer xxx"
   }
   ```
   
-  >  status 201 表示注册成功，400表示用户填写信息有误，403表示用户已存在
+  >  status 200表示发送验证邮件成功，201 表示注册成功，400表示用户填写信息有误，401表示token错误，403表示用户已存在
 
 
 
 #### 管理员获取所有成员信息
 
-- GET /api/v1/users/all
+- GET /api/v1/users
 
 - 接受JSON数据，请求数据示例：
 
@@ -162,9 +168,7 @@
 
 #### 用户修改信息
 
-- PUT /api/v1/users/<user_id>
-
-- `<user_id>`表示需要修改信息的用户ID
+- PUT /api/v1/users
 
 - 接受JSON数据，返回JSON数据
 
@@ -172,25 +176,25 @@
 
   ```json
   {
-      "userid": 114514,
       "username": "yyhtql",
       "password": "",
-      "email": "",
-      "token": "xxx"
+      "phone": "",
+      "email": ""
   }
   ```
 
-  >  token从邮箱验证的url中获取
-  >
-  > 请求时需在请求头加入Authorization，否则会认证失败，引发status 401
+  >  请求时需在请求头加入Authorization，否则会认证失败，引发status 401
 
-  返回JSON数据示例：
+  	返回JSON数据示例：
 
   ```json
   {
-  	"message": "success",
+      "message": "success",
       "status": 201
   }
   ```
 
   > status 201表示修改成功，401表示认证失败
+  >
+
+
