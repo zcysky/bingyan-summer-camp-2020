@@ -34,7 +34,7 @@ func getAllUserInfo(context echo.Context) error {
 	}
 
 	if !auth {
-		return context.String(http.StatusUnauthorized, "go away, you are not a admin")
+		return context.String(http.StatusForbidden, "go away, you are not a admin")
 	}
 
 	allUserInfo := result.([]module_mapper.User)

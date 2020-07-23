@@ -24,8 +24,6 @@ func register(context echo.Context) error {
 
 	registerUserInfo.Password = util.Encrypt(registerUserInfo.Password)
 
-	registerUserInfo.RegisterCode = context.FormValue("register_code")
-
 	done, uuid, token, err := service.RegisterService(registerUserInfo)
 	if err != nil {
 		if err == redis.Nil {
