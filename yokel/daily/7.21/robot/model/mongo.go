@@ -112,3 +112,13 @@ func init() {
 		panic(err)
 	}
 }
+
+func InsertNoti(userId string, eventInfo message.Event) error {
+
+	col := MongoClient.Database("robot").Collection(userId)
+	_, err := col.InsertOne(context.Background(), eventInfo)
+	if err != nil {
+		return err
+	}
+	return nil
+}

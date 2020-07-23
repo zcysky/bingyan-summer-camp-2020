@@ -3,11 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
 	"io/ioutil"
 	"os"
 	"os/signal"
-	"regexp"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -18,75 +16,6 @@ import (
 	"github.com/Logiase/gomirai/message"
 )
 
-func handleSave(robot *gomirai.Bot, event message.Event) error {
-
-	//fmt.Println(e.Sender.Id, fmt.Sprint(e.Sender.Id))
-	tmpE := event
-	tmpE.EventId = uint(config.ConfigSet.EventCountConfig.Id)
-	config.ConfigSet.EventCountConfig.Id++
-	err := controller.HandleAddEvent(fmt.Sprint(event.Sender.Id), tmpE)
-	if err != nil {
-		return err
-	}
-	_, err = robot.SendFriendMessage(event.Sender.Id, 0, message.PlainMessage("your event has been saved successfully"))
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func handleShowAll(robot *gomirai.Bot, event message.Event) error {
-	_, err := robot.SendFriendMessage(event.Sender.Id, 0, message.PlainMessage("your event is shown in the following text"))
-	if err != nil {
-		return err
-	}
-	allEvent, err := controller.HandleQuery(fmt.Sprint(event.Sender.Id))
-	if err != nil {
-		fmt.Println(err)
-	}
-	for _,allEventOne:=range allEvent {
-		allEventJSON, err := json.Marshal(allEventOne)
-		if err != nil {
-			fmt.Println(err)
-		}
-		//fmt.Println(string(allEventJSON))
-		_, err = robot.SendFriendMessage(event.Sender.Id, 0, message.PlainMessage(string(allEventJSON)))
-		if err != nil {
-			return err
-		}
-	}
-	//_, err = robot.SendFriendMessage(event.Sender.Id, 0, message.RichMessage(message.MsgType_Json, string(allEventJSON)))
-	//if err != nil {
-	//	return err
-	//}
-	return nil
-}
-
-func handleDelete(robot *gomirai.Bot, event message.Event,text string) error {
-
-	Regexp := regexp.MustCompile(`^/delete\s([\d]+)$`)
-	params := Regexp.FindStringSubmatch(text)
-	//fmt.Println(params)
-	if len(params) == 2 {
-		err := controller.HandleDeleteEvent(fmt.Sprint(event.Sender.Id), params[1])
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				_, err = robot.SendFriendMessage(event.Sender.Id, 0, message.PlainMessage("there is no such event"))
-				if err != nil {
-					return err
-				}
-			} else {
-				return err
-			}
-		} else {
-			_, err = robot.SendFriendMessage(event.Sender.Id, 0, message.PlainMessage("the event has been deleted"))
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
 
 func main() {
 
@@ -126,7 +55,7 @@ func main() {
 
 							//保存事件  在事件中包含/save
 							if strings.Contains(QQmessage.Text, "/save") {
-								err = handleSave(b, e)
+								err = controller.HandleSave(b, e)
 								if err != nil {
 									fmt.Println(err)
 								}
@@ -134,7 +63,7 @@ func main() {
 
 							//显示用户所有事件  在事件中包含/showMyEvent
 							if strings.Contains(QQmessage.Text, "/showMyEvent") {
-								err = handleShowAll(b, e)
+								err = controller.HandleShowAll(b, e)
 								if err != nil {
 									fmt.Println(err)
 								}
@@ -142,11 +71,17 @@ func main() {
 							}
 							//删除用户事件  在事件中仅有 "/delete eventId"
 							if strings.Contains(QQmessage.Text, "/delete") {
-								err=handleDelete(b,e,QQmessage.Text)
+								err=controller.HandleDelete(b,e,QQmessage.Text)
 								if err != nil {
 									fmt.Println(err)
 								}
 
+							}
+							if strings.Contains(QQmessage.Text, "/addNoti") {
+								err=controller.HandleAddNoti(b,e,QQmessage.Text)
+								if err != nil {
+									fmt.Println(err)
+								}
 							}
 						}
 					}
