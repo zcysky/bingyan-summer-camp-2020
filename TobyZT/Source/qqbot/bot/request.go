@@ -78,7 +78,7 @@ func Verify(url string, session string, qq int) (err error) {
 	return nil
 }
 
-func SendMessage(url string, msg GroupMessage) (msgID int, err error) {
+func SendMessage(url string, msg Message) (msgID int, err error) {
 	msgBuf := new(bytes.Buffer)
 	err = json.NewEncoder(msgBuf).Encode(msg)
 	if err != nil {
