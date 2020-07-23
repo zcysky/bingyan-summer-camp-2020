@@ -5,7 +5,7 @@ type MessageChain struct {
 	Text string `json:"text"`
 }
 
-type GroupMessage struct {
+type Message struct {
 	Session string         `json:"sessionKey"`
 	Target  int            `json:"target"`
 	Message []MessageChain `json:"messageChain"`
@@ -50,4 +50,15 @@ type SingleData struct {
 type FetchResponse struct {
 	Code int          `json:"code"`
 	Data []SingleData `json:"data"`
+}
+
+type Chat struct {
+	Data []string `json:"data"`
+}
+
+type Reminder struct {
+	ID      int    `bson:"id"`
+	Type    string `bson:"type"`
+	Due     int64  `bson:"due"`
+	Content string `bson:"content"`
 }
