@@ -94,3 +94,16 @@
 [docker 从入门到实践](https://yeasy.gitbook.io/docker_practice)
 
 [package md5](https://golang.org/pkg/crypto/md5/)
+
+## 0724
+
+### 学习内容
+
+1. 写完阶段一API文档
+2. 写完项目一除SMTP邮箱验证外的注册部分
+
+### 参考资料
+
+[CSDN BSON介绍 BSON与JSON的区别](https://blog.csdn.net/m0_38110132/article/details/77716792)
+
+[GO 操作MongoDB](https://www.cnblogs.com/Golanguage/p/12285707.html)
