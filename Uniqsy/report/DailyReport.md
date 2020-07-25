@@ -107,3 +107,11 @@
 [CSDN BSON介绍 BSON与JSON的区别](https://blog.csdn.net/m0_38110132/article/details/77716792)
 
 [GO 操作MongoDB](https://www.cnblogs.com/Golanguage/p/12285707.html)
+
+## 0725
+
+### 学习内容
+
+1. 学习邮箱的SMTP服务器相关知识
+2. 了解`net/smtp`包的使用方法
+
