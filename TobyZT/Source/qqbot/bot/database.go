@@ -36,11 +36,6 @@ func SetupDatabase() (err error) {
 }
 
 func Insert(reminder Reminder) (err error) {
-	err = client.Ping(context.TODO(), nil)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
 
 	col := client.Database("reminder").Collection("reminder1")
 	_, err = col.InsertOne(context.TODO(), reminder)
@@ -54,19 +49,39 @@ func Insert(reminder Reminder) (err error) {
 // Query deletes overdue reminders,
 // then queries and returns upcoming(5 min) reminders
 func Query() (reminders []Reminder, err error) {
-	err = client.Ping(context.TODO(), nil)
-	if err != nil {
-		log.Println(err)
-		return reminders, err
-	}
-
 	col := client.Database("reminder").Collection("reminder1")
 
-	filter := bson.M{"due": bson.M{"$lt": time.Now().Unix()}}
+	filter := bson.M{"due": bson.M{"$lt": time.Now().Add(-1 * time.Minute).Unix()}}
 	col.DeleteMany(context.TODO(), filter)
 
-	border := time.Now().Add(5 * time.Minute).Unix()
-	filter = bson.M{"due": bson.M{"$lte": border}}
+	opt := options.Find().SetSort(bson.M{"due": 1})
+	cur, err := col.Find(context.TODO(), bson.M{}, opt)
+	if cur == nil || err != nil {
+		return reminders, err
+	}
+	for cur.Next(context.TODO()) {
+		var r Reminder
+		err = cur.Decode(&r)
+		// upcoming reminder
+		if r.Due <= time.Now().Add(1*time.Minute).Unix() {
+			reminders = append(reminders, r)
+			continue
+		}
+		// remind in advance
+		if time.Now().Add(time.Duration(r.Advance)*time.Minute).Unix() >= r.Due {
+			if int((r.Due-time.Now().Unix())/60)%r.Gap == 0 {
+				reminders = append(reminders, r)
+			}
+		}
+	}
+	return reminders, err
+}
+
+func QueryByID(id int) (reminders []Reminder, err error) {
+	col := client.Database("reminder").Collection("reminder1")
+
+	filter := bson.M{"id": id}
+
 	opt := options.Find().SetSort(bson.M{"due": 1})
 	cur, err := col.Find(context.TODO(), filter, opt)
 	if cur != nil {

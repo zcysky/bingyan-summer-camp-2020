@@ -62,3 +62,8 @@
 ### Day 10
 
 - Mirai：实现了添加备忘录，到时间自动提醒的功能（备忘录通过数据库来存储，每五分钟进行一次查询，将即将到期的事件取出设置定时提醒）
+
+### Day 11
+
+- Mirai：完成了qqbot的开发
+- 部署：用docker分别将mirai、qqbot项目build成镜像，使用dockerfile及docker-compose将mirai、qqbot、mongodb部署到服务器上
