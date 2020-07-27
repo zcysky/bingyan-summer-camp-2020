@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func Mstart() *mongo.Client{
+func Mstart() *mongo.Client {
 	// 设置客户端连接配置
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	// 连接到MongoDB
@@ -28,7 +28,7 @@ func Mstart() *mongo.Client{
 	//开始操作
 }
 
-func Insert(client *mongo.Client, r *Remind) error{
+func Insert(client *mongo.Client, r *Remind) error {
 	collection := client.Database(Info.DataBase).Collection(Info.Collection)
 	_, err := collection.InsertOne(context.TODO(), r)
 	if err != nil {
@@ -38,12 +38,12 @@ func Insert(client *mongo.Client, r *Remind) error{
 	return nil
 }
 
-func ReplyAll(client *mongo.Client, m *PostInfo) {
+func ReplyAll(client *mongo.Client, m *PostInfo) bool{
 	collection := client.Database(Info.DataBase).Collection(Info.Collection)
 	findOptions := options.Find()
 	var results []*Remind
 	// 把bson.D{{}}作为一个filter来匹配所有文档
-	cur, err := collection.Find(context.TODO(), bson.D{{}}, findOptions)
+	cur, err := collection.Find(context.TODO(), bson.D{{"qq", m.UserId}}, findOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,9 +57,16 @@ func ReplyAll(client *mongo.Client, m *PostInfo) {
 			log.Fatal(err)
 		}
 		results = append(results, &elem)
-		SendMessage(m.UserId, "ID："+elem.ID)
-		SendMessage(m.UserId, "标题："+elem.Title)
-		SendMessage(m.UserId, "内容："+elem.Content)
+		if m.GroupId == 0 {
+			SendPrivateMessage(m.UserId, "ID："+elem.ID)
+			SendPrivateMessage(m.UserId, "标题："+elem.Title)
+			SendPrivateMessage(m.UserId, "内容："+elem.Content)
+		} else {
+			SendGroupMessage(m.GroupId, "ID："+elem.ID)
+			SendGroupMessage(m.GroupId, "标题："+elem.Title)
+			SendGroupMessage(m.GroupId, "内容："+elem.Content)
+		}
+
 		time.Sleep(500000000)
 	}
 
@@ -68,11 +75,15 @@ func ReplyAll(client *mongo.Client, m *PostInfo) {
 	}
 	// 完成后关闭游标
 	cur.Close(context.TODO())
+	if len(results) == 0 {
+		return false
+	}
+	return true
 }
 
-func Delete(client *mongo.Client, m *PostInfo) bool{
+func Delete(client *mongo.Client, m *PostInfo) bool {
 	collection := client.Database(Info.DataBase).Collection(Info.Collection)
-	deleteResult, err := collection.DeleteOne(context.TODO(), bson.D{{"id",m.Message}})
+	deleteResult, err := collection.DeleteOne(context.TODO(), bson.D{{"id", m.Message}})
 	if err != nil {
 		//log.Fatal(err)
 		return false
@@ -84,7 +95,7 @@ func Delete(client *mongo.Client, m *PostInfo) bool{
 	return false
 }
 
-func ChangeTitle(client *mongo.Client, m *PostInfo) int64{
+func ChangeTitle(client *mongo.Client, m *PostInfo) int64 {
 	collection := client.Database(Info.DataBase).Collection(Info.Collection)
 	filter := bson.D{{"id", RemindID}}
 	update := bson.D{
@@ -99,7 +110,7 @@ func ChangeTitle(client *mongo.Client, m *PostInfo) int64{
 	return result.MatchedCount
 }
 
-func ChangeContent(client *mongo.Client, m *PostInfo) int64{
+func ChangeContent(client *mongo.Client, m *PostInfo) int64 {
 	collection := client.Database(Info.DataBase).Collection(Info.Collection)
 	filter := bson.D{{"id", RemindID}}
 	update := bson.D{
@@ -114,9 +125,40 @@ func ChangeContent(client *mongo.Client, m *PostInfo) int64{
 	return result.MatchedCount
 }
 
-func CheckID(client *mongo.Client, n *Remind) (bool, *Remind){
-	collection := client.Database("test").Collection("user-data-test")
-	filter := bson.D{{"id", n.ID}}
+func ChangeTime(client *mongo.Client, t int64) int64 {
+	collection := client.Database(Info.DataBase).Collection(Info.Collection)
+	filter := bson.D{{"id", RemindID}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"ddl", t},
+		}},
+	}
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return 0
+	}
+	return result.MatchedCount
+}
+
+func ChangeAheadTime(client *mongo.Client, ahead int, interval int) int64{
+	collection := client.Database(Info.DataBase).Collection(Info.Collection)
+	filter := bson.D{{"id", RemindID}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"ahead", ahead},
+			{"interval", interval},
+		}},
+	}
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return 0
+	}
+	return result.MatchedCount
+}
+
+func CheckID(client *mongo.Client, ID string) (bool, *Remind) {
+	collection := client.Database(Info.DataBase).Collection(Info.Collection)
+	filter := bson.D{{"id", ID}}
 	result := new(Remind)
 	err := collection.FindOne(context.TODO(), filter).Decode(result)
 	if err != nil {
@@ -124,4 +166,3 @@ func CheckID(client *mongo.Client, n *Remind) (bool, *Remind){
 	}
 	return true, result
 }
-
