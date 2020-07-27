@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"log"
-	"qq-bot-backend/config"
+	"qq-bot-ref/config"
 	"strconv"
 	"time"
 )

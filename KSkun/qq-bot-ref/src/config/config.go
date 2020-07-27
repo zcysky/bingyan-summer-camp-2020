@@ -7,9 +7,15 @@ import (
 	"os"
 )
 
+const VERSION = "1.0"
+
 type TypeAppConfig struct {
-	Address     string `json:"address"`
-	AccessToken string `json:"access_token"`
+	MiraiHost         string `json:"mirai_host"`
+	MiraiAuthkey      string `json:"mirai_authkey"`
+	QQNumber          uint   `json:"qq_number"`
+	TimeLayout        string `json:"time_layout"`
+	ChannelBufferSize uint   `json:"channel_buffer_size"`
+	Debug             bool   `json:"debug"`
 }
 
 type TypeMongoConfig struct {

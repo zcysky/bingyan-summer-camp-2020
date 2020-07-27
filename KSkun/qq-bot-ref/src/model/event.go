@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 const colNameEvent = "event"
@@ -17,7 +18,7 @@ func initModelEvent() {
 
 type Event struct {
 	ID             primitive.ObjectID `bson:"_id" json:"_id"`
-	User           string             `bson:"user" json:"user"`
+	User           uint               `bson:"user" json:"user"`
 	Desc           string             `bson:"desc" json:"desc"`
 	Time           int64              `bson:"time" json:"time"`
 	Remind         bool               `bson:"remind" json:"remind"`
@@ -43,10 +44,19 @@ func GetEventByID(idHex string) (Event, bool, error) {
 	return event, true, nil
 }
 
-func GetEventsByCondition(condition bson.M) ([]Event, error) {
+func GetEventsByUser(user uint) ([]Event, error) {
 	var events []Event
+	result, err := colEvent.Find(context.Background(), bson.M{"user": user})
+	if err != nil {
+		return events, err
+	}
+	err = result.All(context.Background(), &events)
+	return events, err
+}
 
-	result, err := colEvent.Find(context.Background(), condition)
+func GetEventsToRemind() ([]Event, error) {
+	var events []Event
+	result, err := colEvent.Find(context.Background(), bson.M{"remind_time": bson.M{"$lte": time.Now().Unix()}})
 	if err != nil {
 		return events, err
 	}
@@ -61,20 +71,6 @@ func AddEvent(event Event) (string, error) {
 		return "", err
 	}
 	return event.ID.Hex(), nil
-}
-
-func UpdateEvent(idHex string, update bson.M) error {
-	id, err := primitive.ObjectIDFromHex(idHex)
-	if err != nil {
-		return err
-	}
-
-	updateQuery := bson.M{
-		"$set": update,
-	}
-
-	_, err = colEvent.UpdateOne(context.Background(), bson.M{"_id": id}, updateQuery)
-	return err
 }
 
 func DeleteEvent(idHex string) error {

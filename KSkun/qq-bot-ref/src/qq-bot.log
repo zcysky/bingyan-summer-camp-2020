@@ -1,0 +1,3 @@
+2020/07/27 17:00:35 qq-bot-ref 1.0 starting...
+2020/07/27 17:00:35 config: error when read config file default.json
+2020/07/27 17:00:35 open ./config/default.json: The system cannot find the file specified.
