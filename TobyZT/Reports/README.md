@@ -67,3 +67,12 @@
 
 - Mirai：完成了qqbot的开发
 - 部署：用docker分别将mirai、qqbot项目build成镜像，使用dockerfile及docker-compose将mirai、qqbot、mongodb部署到服务器上
+
+### Day 12
+
+- ~~摸鱼去了~~ ddl将至，去做物理实验了（
+
+### Day 13
+
+- 商城系统：20%，完成了用户账号相关的部分
+- 数据库学习：学习mongodb不同表之间建立索引

@@ -1,5 +1,8 @@
-Day 1 ~ Day 3 代码见`SummerCamp`
+`SummerCamp`、`jwt` ：学习用代码
 
-Day 4 代码见`JWT`
+`account`：阶段一（成员管理系统）
 
-Day 5 代码见`account`
+`qqbot`：阶段二（mirai机器人）
+
+`mall`：阶段三（商城系统）—— 开发中
+
