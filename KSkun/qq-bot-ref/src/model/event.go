@@ -72,7 +72,10 @@ func GetEventsByUser(user uint) ([]Event, error) {
 
 func GetEventsToRemind() ([]Event, error) {
 	var events []Event
-	result, err := colEvent.Find(context.Background(), bson.M{"remind_time": bson.M{"$lte": time.Now().Unix()}})
+	result, err := colEvent.Find(context.Background(), bson.M{
+		"remind_time": bson.M{"$lte": time.Now().Unix()}, 
+		"is_reminding": false,
+	})
 	if err != nil {
 		return events, err
 	}
