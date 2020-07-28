@@ -20,7 +20,11 @@ services:
         networks: 
             - qq-bot-ref
         volumes:
-            - ./mirai_tmp:/tmp
+            - ./bot/tmp:/tmp
+        expose:
+            - "30000"
+        ports:
+            - "30000"
         container_name: qq-bot-ref_mirai
     app:
         build: src
