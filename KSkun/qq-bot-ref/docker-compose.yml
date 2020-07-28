@@ -30,6 +30,9 @@ services:
             - CONFIG_FILE=produce.json
         networks: 
             - qq-bot-ref
+        depends_on: 
+            - mongo
+            - mirai
         container_name: qq-bot-ref_app
 networks:
     qq-bot-ref:
