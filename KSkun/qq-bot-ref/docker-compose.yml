@@ -22,6 +22,8 @@ services:
         container_name: qq-bot-ref_mirai
     app:
         build: src
+        volumes: 
+            - ./env:/env
         environment: 
             - CONFIG_FILE=produce.json
         networks: 
