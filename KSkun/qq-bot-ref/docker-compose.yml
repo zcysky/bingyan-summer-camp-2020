@@ -1,0 +1,29 @@
+version: "3"
+
+services: 
+    mongo:
+        image: mongo:latest
+        volumes: 
+            - ./data/db/master:/data/db
+            - /etc/localtime:/etc/localtime:ro
+        environment:
+            - TZ=Asia/Shanghai
+        container_name: qq-bot-ref_mongo
+        expose:
+            - "27017"
+        ports:
+            - "27017"
+        networks:
+            - qq-bot-ref
+    mirai:
+        build: bot
+        networks: 
+            - qq-bot-ref
+        container_name: qq-bot-ref_mirai
+    app:
+        build: src
+        environment: 
+            - CONFIG_FILE=produce.json
+        networks: 
+            - qq-bot-ref
+        container_name: qq-bot-ref_app

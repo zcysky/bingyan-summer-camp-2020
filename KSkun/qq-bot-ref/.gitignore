@@ -1,3 +1,4 @@
 .idea
 src/go.sum
 env/qq-bot.log
+bot/config.txt
