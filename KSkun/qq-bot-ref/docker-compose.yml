@@ -9,8 +9,6 @@ services:
         environment:
             - TZ=Asia/Shanghai
         container_name: qq-bot-ref_mongo
-        ports:
-            - "27017"
         networks:
             - qq-bot-ref
     mirai:
@@ -19,8 +17,6 @@ services:
             - qq-bot-ref
         volumes:
             - ./bot/tmp:/tmp
-        ports:
-            - "30000"
         container_name: qq-bot-ref_mirai
     app:
         build: src
