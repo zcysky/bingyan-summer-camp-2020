@@ -13,6 +13,9 @@ services:
             - qq-bot-ref
     mirai:
         build: bot
+        environment: 
+            - QQ_NUMBER=12345678
+            - QQ_PASSWORD=pass
         networks: 
             - qq-bot-ref
         volumes:
