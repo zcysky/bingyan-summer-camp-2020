@@ -24,6 +24,22 @@ type Event struct {
 	Remind         bool               `bson:"remind" json:"remind"`
 	RemindTime     int64              `bson:"remind_time" json:"remind_time"`
 	RemindInterval int                `bson:"remind_interval" json:"remind_interval"`
+	IsReminding    bool               `bson:"is_reminding" json:"-"`
+}
+
+func InitRemindingStatus() error {
+	_, err := colEvent.UpdateMany(context.Background(), bson.M{}, bson.M{"$set": bson.M{"is_reminding": false}})
+	return err
+}
+
+func SetReminding(idHex string) error {
+	id, err := primitive.ObjectIDFromHex(idHex)
+	if err != nil {
+		return err
+	}
+
+	_, err = colEvent.UpdateOne(context.Background(), bson.M{"_id": id}, bson.M{"$set": bson.M{"is_reminding": true}})
+	return err
 }
 
 func GetEventByID(idHex string) (Event, bool, error) {

@@ -102,6 +102,7 @@ func HandlerDelete(qq uint, msg string, chanIn chan string, chanOut util.SendMsg
 		return
 	}
 
+	abortRemind(event.ID.Hex())
 	err = model.DeleteEvent(event.ID.Hex())
 	if err != nil {
 		chanOut <- util.FailedMsg(qq, config.Locale.FuncDelete, err.Error())
@@ -142,6 +143,36 @@ func HandlerList(qq uint, msg string, chanIn chan string, chanOut util.SendMsgCh
 	waitGroup.Done()
 }
 
+var (
+	sigChanMap SigChanMap
+	waitGroupMap WaitGroupMap
+)
+
+func initEvent() {
+	sigChanMap = make(SigChanMap)
+	waitGroupMap = make(WaitGroupMap)
+}
+
+func initChan(idHex string) {
+	sigChanMap[idHex] = make(chan bool, 1)
+	waitGroupMap[idHex] = &sync.WaitGroup{}
+	waitGroupMap[idHex].Add(1)
+	go deleteChan(idHex)
+}
+
+func deleteChan(idHex string) {
+	waitGroupMap[idHex].Wait()
+	close(sigChanMap[idHex])
+	delete(sigChanMap, idHex)
+	delete(waitGroupMap, idHex)
+}
+
+func abortRemind(idHex string) {
+	if sigChan, found := sigChanMap[idHex]; found {
+		sigChan <- true
+	}
+}
+
 func CheckerRemind(chanOut util.SendMsgChan) {
 	for {
 		events, err := model.GetEventsToRemind()
@@ -150,26 +181,35 @@ func CheckerRemind(chanOut util.SendMsgChan) {
 			log.Panic(err)
 		}
 		for _, event := range events {
-			err = model.DeleteEvent(event.ID.Hex())
+			err = model.SetReminding(event.ID.Hex())
 			if err != nil {
-				log.Println("controller: error when deleting event " + event.ID.Hex())
+				log.Println("controller: error when set reminding status for event " + event.ID.Hex())
 				log.Panic(err)
 			}
-			go workerRemind(event, chanOut)
+			idHex := event.ID.Hex()
+			initChan(idHex)
+			go workerRemind(event, chanOut, sigChanMap[idHex], waitGroupMap[idHex])
 		}
 		time.Sleep(30 * time.Second) // check new events every 30s
 	}
 }
 
-func workerRemind(event model.Event, chanOut util.SendMsgChan) {
+func workerRemind(event model.Event, chanOut util.SendMsgChan, chanSig chan bool, waitGroup *sync.WaitGroup) {
 	eventTime := time.Unix(event.Time, 0)
 	for {
-		if time.Now().After(eventTime) {
-			break
+		select {
+		case <-chanSig:
+			waitGroup.Done()
+			return
+		default:
+			if time.Now().After(eventTime) {
+				break
+			}
+			chanOut <- util.DefaultMsg(event.User, fmt.Sprintf(config.Locale.Remind, event.Desc,
+				time.Unix(event.Time, 0).Sub(time.Now())/time.Minute))
+			time.Sleep(time.Duration(event.RemindInterval) * time.Minute)
 		}
-		chanOut <- util.DefaultMsg(event.User, fmt.Sprintf(config.Locale.Remind, event.Desc,
-			time.Unix(event.Time, 0).Sub(time.Now())/time.Minute))
-		time.Sleep(time.Duration(event.RemindInterval) * time.Minute)
 	}
+	waitGroup.Done()
 	chanOut <- util.DefaultMsg(event.User, fmt.Sprintf(config.Locale.RemindExpire, event.Desc))
 }

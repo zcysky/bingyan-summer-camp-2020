@@ -2,6 +2,7 @@
   "success": "%s操作成功",
   "failed": "%s操作失败，请向管理员反馈问题",
   "failed_debug": "%s操作失败，错误信息：%s",
+  "unknown_operation": "未知操作",
 
   "func_help": "获取帮助信息",
   "func_add": "添加事件",

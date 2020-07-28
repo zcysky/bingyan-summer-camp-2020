@@ -60,7 +60,9 @@ func InitView() {
 	msgChan := make(chan message.Message, config.Config.App.ChannelBufferSize)
 	go func() {
 		for msg := range msgChan {
-			FilterEvent(msg, sendMsgChan)
+			if !FilterEvent(msg, sendMsgChan) {
+				sendMsgChan <- util.DefaultMsg(msg.SenderId, config.Locale.UnknownOperation)
+			}
 		}
 	}()
 
@@ -74,7 +76,10 @@ func InitView() {
 		case e := <-Bot.Chan:
 			switch e.Type {
 			case message.EventReceiveFriendMessage:
-				for _, msg := range e.MessageChain {
+				for i, msg := range e.MessageChain {
+					if i == 0 {
+						continue
+					}
 					msg.SenderId = e.Sender.Id
 					msgChan <- msg
 				}

@@ -8,9 +8,10 @@ import (
 )
 
 type TypeLocale struct {
-	Success     string `json:"success"`
-	Failed      string `json:"failed"`
-	FailedDebug string `json:"failed_debug"`
+	Success          string `json:"success"`
+	Failed           string `json:"failed"`
+	FailedDebug      string `json:"failed_debug"`
+	UnknownOperation string `json:"unknown_operation"`
 
 	FuncHelp   string `json:"func_help"`
 	FuncAdd    string `json:"func_add"`
