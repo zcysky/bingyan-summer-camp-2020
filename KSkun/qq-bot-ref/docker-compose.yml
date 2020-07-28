@@ -27,3 +27,5 @@ services:
         networks: 
             - qq-bot-ref
         container_name: qq-bot-ref_app
+networks:
+    qq-bot-ref:
