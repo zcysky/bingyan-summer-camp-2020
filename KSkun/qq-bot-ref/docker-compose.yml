@@ -19,6 +19,8 @@ services:
         build: bot
         networks: 
             - qq-bot-ref
+        volumes:
+            - ./mirai_tmp:/tmp
         container_name: qq-bot-ref_mirai
     app:
         build: src
