@@ -27,20 +27,25 @@ func InitRouter() *gin.Engine {
 		commodityGroup.GET("/commodities", controller.GetCommodities)
 		//get hot commodity keywords:
 		commodityGroup.GET("/commodities/hot", controller.GetHots)
+		//get particular commodity:
+		commodityGroup.GET("/commodity/:id", controller.GetCommodityByID)
 		//get self published commodity:
 		commodityGroup.GET("/me/commodities", controller.LoginVerification, controller.QuerySelfCommodities)
 		//to publish commodity:
-		commodityGroup.POST("/commodities")
+		commodityGroup.POST("/commodities", controller.LoginVerification, controller.PublishCommodity)
 		//delete commodity:
-		commodityGroup.DELETE("/commodity/:id", controller.LoginVerification)
+		commodityGroup.DELETE("/commodity/:id", controller.LoginVerification, controller.DeleteCommodity)
 
 	}
 
 	collectionGroup := router.Group("")
 	{
-		collectionGroup.GET("/me/collections", controller.LoginVerification)    //get self collections
-		collectionGroup.POST("/me/collections", controller.LoginVerification)   //add collection
-		collectionGroup.DELETE("/me/collections", controller.LoginVerification) //delete collection
+		//get self collections:
+		collectionGroup.GET("/me/collections", controller.LoginVerification, controller.GetSelfCollections)
+		//add collection:
+		collectionGroup.POST("/me/collections", controller.LoginVerification, controller.AddCollection)
+		//delete collection:
+		collectionGroup.DELETE("/me/collections", controller.LoginVerification, controller.DeleteCollections)
 	}
 
 	return router

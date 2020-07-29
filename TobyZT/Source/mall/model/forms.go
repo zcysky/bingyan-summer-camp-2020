@@ -34,10 +34,38 @@ type Response struct {
 }
 
 type Commodity struct {
-	ID        primitive.ObjectID `bson:"_id"`
-	Title     string             `bson:"title"`
-	Price     float32            `bson:"price"`
-	Category  int                `bson:"category"`
-	Picture   string             `bson:"picture"`
-	Publisher string             `bson:"publisher"`
+	ID          primitive.ObjectID `bson:"_id"`
+	Title       string             `bson:"title"`
+	Description string             `bson:"description"`
+	Price       float32            `bson:"price"`
+	Category    int                `bson:"category"`
+	Picture     string             `bson:"picture"`
+	Publisher   string             `bson:"publisher"`
+	View        int                `bson:"view"`
+	Collect     int                `bson:"collect"`
+}
+
+type SingleData struct {
+	ID    string `bson:"id"`
+	Title string `bson:"title"`
+}
+
+type CommodityRequest struct {
+	Page     int    `json:"page"`
+	Limit    int    `json:"limit"`
+	Category int    `json:"category"`
+	Keyword  string `json:"keyword"`
+}
+
+type PublishRequest struct {
+	Title    string  `json:"title"`
+	Desc     string  `json:"desc"`
+	Category int     `json:"category"`
+	Price    float32 `json:"price"`
+	Picture  string  `json:"picture"`
+}
+
+type Counter struct {
+	ViewCnt    int
+	CollectCnt int
 }

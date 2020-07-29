@@ -75,7 +75,7 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	err = model.Update(username.(string), form)
+	err = model.UpdateUser(username.(string), form)
 	if err != nil {
 		failMsg(c, http.StatusBadRequest, err.Error())
 		return
@@ -109,7 +109,7 @@ func GetSelfInfo(c *gin.Context) {
 		failMsg(c, http.StatusUnauthorized, "user not found")
 		return
 	}
-	form, err := model.QueryOne(username.(string))
+	form, cnt, err := model.QueryOneUser(username.(string))
 	if err != nil {
 		failMsg(c, http.StatusGone, "user not found")
 		return
@@ -122,8 +122,8 @@ func GetSelfInfo(c *gin.Context) {
 			"nickname":            form.Nickname,
 			"mobile":              form.Mobile,
 			"email":               form.Email,
-			"total_view_count":    0,
-			"total_collect_count": 0,
+			"total_view_count":    cnt.ViewCnt,
+			"total_collect_count": cnt.CollectCnt,
 		},
 	})
 }
@@ -139,7 +139,7 @@ func GetPublicInfo(c *gin.Context) {
 		GetSelfInfo(c)
 		return
 	}
-	form, err := model.QueryOne(target)
+	form, cnt, err := model.QueryOneUser(target)
 	if err != nil {
 		failMsg(c, http.StatusGone, "user not found")
 		return
@@ -150,8 +150,8 @@ func GetPublicInfo(c *gin.Context) {
 		"data": gin.H{
 			"nickname":            form.Nickname,
 			"email":               form.Email,
-			"total_view_count":    0,
-			"total_collect_count": 0,
+			"total_view_count":    cnt.ViewCnt,
+			"total_collect_count": cnt.CollectCnt,
 		},
 	})
 }
