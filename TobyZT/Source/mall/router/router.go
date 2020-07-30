@@ -9,6 +9,7 @@ import (
 // and then return the pointer of the engine
 func InitRouter() *gin.Engine {
 	router := gin.Default()
+	router.MaxMultipartMemory = 4 << 20 // limit: 4MB
 	userGroup := router.Group("")
 	{
 		userGroup.POST("/user", controller.Signup)
@@ -28,7 +29,7 @@ func InitRouter() *gin.Engine {
 		//get hot commodity keywords:
 		commodityGroup.GET("/commodities/hot", controller.GetHots)
 		//get particular commodity:
-		commodityGroup.GET("/commodity/:id", controller.GetCommodityByID)
+		commodityGroup.GET("/commodity/:id", controller.TryToGetUser, controller.GetCommodityByID)
 		//get self published commodity:
 		commodityGroup.GET("/me/commodities", controller.LoginVerification, controller.QuerySelfCommodities)
 		//to publish commodity:
@@ -48,5 +49,10 @@ func InitRouter() *gin.Engine {
 		collectionGroup.DELETE("/me/collections", controller.LoginVerification, controller.DeleteCollections)
 	}
 
+	fileGroup := router.Group("")
+	{
+		fileGroup.POST("/pics", controller.LoginVerification, controller.FileUpload)
+		fileGroup.GET("/pics/:filename", controller.GetPicture)
+	}
 	return router
 }

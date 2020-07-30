@@ -28,7 +28,12 @@ func GetCommodities(c *gin.Context) {
 }
 
 func GetHots(c *gin.Context) {
-
+	keywords := model.GetHots(10)
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"error":   "",
+		"data":    keywords,
+	})
 }
 
 func GetCommodityByID(c *gin.Context) {
@@ -39,6 +44,12 @@ func GetCommodityByID(c *gin.Context) {
 		failMsg(c, http.StatusNotFound, "commodity not found")
 		return
 	}
+	// create history
+	username, _ := c.Get("username")
+	if username != "" {
+		model.CreateHistory(id, username.(string))
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"error":   "",

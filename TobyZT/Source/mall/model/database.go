@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,6 +16,7 @@ import (
 var client *mongo.Client
 var userColl *mongo.Collection
 var commodityColl *mongo.Collection
+var keywordColl *mongo.Collection
 
 func SetupDatabase() (err error) {
 	clientOptions := options.Client().ApplyURI("mongodb://127.0.0.1:27017")
@@ -33,6 +35,7 @@ func SetupDatabase() (err error) {
 	}
 	userColl = client.Database("mall").Collection("users")
 	commodityColl = client.Database("mall").Collection("commodities")
+	keywordColl = client.Database("mall").Collection("keywords")
 	log.Println("Database connected successfully!")
 	return err
 }
@@ -82,23 +85,55 @@ func UpdateUser(username string, updateForm UpdateForm) (err error) {
 
 func GetCommodities(req CommodityRequest) (commodities []Commodity) {
 	var filter bson.M
+	var filter2 []bson.M
+	keywords := strings.Split(req.Keyword, " ")
+	for _, k := range keywords {
+		filter2 = append(filter2, bson.M{"title": bson.M{"$regex": k}})
+	}
 	if req.Category != 0 {
-		filter = bson.M{
-			"category": req.Category,
-			"title":    bson.M{"$regex": req.Keyword},
-		}
+		filter = bson.M{"category": req.Category, "$or": filter2}
 	} else {
-		filter = bson.M{"title": bson.M{"$regex": req.Keyword}}
+		filter = bson.M{"title": filter2}
 	}
 	var opts *options.FindOptions
 	opts.SetLimit(int64(req.Limit))
 	opts.SetSkip(int64((req.Page - 1) * req.Limit))
-	opts.SetSort(bson.M{"view": 1})
+	opts.SetSort(bson.M{"view": -1})
 	cur, _ := commodityColl.Find(context.TODO(), filter)
 	if cur != nil {
 		cur.All(context.TODO(), &commodities)
 	}
+
+	//Save keywords
+	for _, k := range keywords {
+		filter = bson.M{"key": k}
+		res := keywordColl.FindOne(context.TODO(), filter)
+		if res == nil {
+			keywordColl.InsertOne(context.TODO(), bson.M{"key": k, "value": 1})
+			continue
+		}
+		update := bson.M{"$inc": bson.M{"value": 1}}
+		keywordColl.UpdateOne(context.TODO(), filter, update)
+	}
 	return commodities
+}
+
+func GetHots(limit int) (keywords []string) {
+	opts := options.Find().SetSort(bson.M{"value": -1})
+	cur, _ := keywordColl.Find(context.TODO(), bson.M{}, opts)
+	if cur != nil {
+		var res struct {
+			key   string
+			value int
+		}
+		i := 0
+		for i < limit && cur.Next(context.TODO()) {
+			cur.Decode(&res)
+			keywords = append(keywords, res.key)
+			i++
+		}
+	}
+	return keywords
 }
 
 func GetOneCommodity(id string) (form Commodity) {
@@ -173,4 +208,10 @@ func AddCollectCounter(id string, amount int) {
 	filter := bson.M{"_id": ObjID}
 	update := bson.M{"$inc": bson.M{"collect": amount}}
 	commodityColl.UpdateOne(context.TODO(), filter, update)
+}
+
+func CreateHistory(commodityID string, username string) {
+	filter := bson.M{"username": username}
+	update := bson.M{"$push": bson.M{"history": commodityID}}
+	userColl.UpdateOne(context.TODO(), filter, update)
 }

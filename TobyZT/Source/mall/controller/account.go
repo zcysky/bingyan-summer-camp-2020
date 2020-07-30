@@ -89,7 +89,7 @@ func Update(c *gin.Context) {
 
 func LoginVerification(c *gin.Context) {
 	tokenStr := c.Request.Header.Get("Authorization")
-	username, valid, err := model.ParseToken(tokenStr)
+	username, valid, err := model.ParseToken(tokenStr[7:])
 	if !valid || err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
@@ -100,6 +100,15 @@ func LoginVerification(c *gin.Context) {
 		return
 	}
 	c.Set("username", username)
+	c.Next()
+}
+
+func TryToGetUser(c *gin.Context) {
+	tokenStr := c.Request.Header.Get("Authorization")
+	username, _, _ := model.ParseToken(tokenStr[7:])
+	if username != "" {
+		c.Set("username", username)
+	}
 	c.Next()
 }
 
@@ -183,7 +192,7 @@ func validInfo(form model.User) (valid bool, errMsg string) {
 	}
 
 	// verify username
-	ptn = `^[a-zA-Z0-9_-]{3,12}$`
+	ptn = `^[a-zA-Z0-9_-]{2,12}$`
 	reg = regexp.MustCompile(ptn)
 	valid = reg.MatchString(form.Username)
 	if !valid {
