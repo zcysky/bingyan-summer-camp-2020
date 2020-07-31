@@ -10,8 +10,6 @@ import (
 )
 
 
-
-
 func Mstart() *mongo.Client{
 	// 设置客户端连接配置
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -63,6 +61,67 @@ func CheckUserPass (client *mongo.Client, u *UserInfoAll) (bool, *UserInfoAll){
 	return true, &result
 }
 
+func UserView(client *mongo.Client, ID string, key string) bool {
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionU)
+	filter := bson.D{{"id", ID}}
+	update := bson.D{
+		{"$inc", bson.D{
+			{key, 1},
+		}},
+	}
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func UserUpdate(client *mongo.Client, ID string, key string, value string) bool {
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionU)
+	filter := bson.D{{"id", ID}}
+	update := bson.D{
+		{"$set", bson.D{
+			{key, value},
+		}},
+	}
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func UserDelete(client *mongo.Client, ID string) bool{
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionU)
+	_, err := collection.DeleteOne(context.TODO(), bson.D{{"id",ID}})
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func InsertGood(client *mongo.Client, g *GoodInfoALL) error{
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionG)
+	_, err := collection.InsertOne(context.TODO(), g)
+	if err != nil {
+		fmt.Println("插入数据库失败")
+		return err
+	}
+	return nil
+}
+
+func CheckGood(client *mongo.Client, key string, value string) (bool, *GoodInfoALL){
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionG)
+	filter := bson.D{{key, value}}
+	var result GoodInfoALL
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		fmt.Println(err)
+		return false, nil
+	}
+	return true, &result
+}
+
 func GoodList(client *mongo.Client,r *ReqGoodsList) []*GoodInfoList{
 	collection := client.Database(Info.DataBase).Collection(Info.CollectionG)
 	findOptions := options.Find()
@@ -87,6 +146,66 @@ func GoodList(client *mongo.Client,r *ReqGoodsList) []*GoodInfoList{
 	return results
 }
 
+func MyGoodsList(client *mongo.Client, ID string) []*GoodInfoList{
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionG)
+	findOptions := options.Find()
+	var results []*GoodInfoList
+	query:=bson.D{{"pubuser", ID}}
+	cur, err := collection.Find(context.TODO(), query, findOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for cur.Next(context.TODO()) {
+		var elem GoodInfoList
+		err := cur.Decode(&elem)
+		if err != nil {
+			log.Fatal(err)
+		}
+		results = append(results, &elem)
+	}
+	if err := cur.Err(); err != nil {
+		log.Fatal(err)
+	}
+	cur.Close(context.TODO())
+	return results
+}
+
+//func MyCollections(client *mongo.Client, ID string) []*GoodInfoSim {
+//	collection := client.Database(Info.DataBase).Collection(Info.CollectionU)
+//
+//	filter := bson.D{{"id", ID}}
+//	var results []*GoodInfoList
+//	err := collection.FindOne(context.TODO(), filter).Decode(result)
+//	if err != nil {
+//		fmt.Println(err)
+//		return false, nil
+//	}
+//}
+
+func UpdateGood(client *mongo.Client, ID string, key string) bool {
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionG)
+	filter := bson.D{{"id", ID}}
+	update := bson.D{
+		{"$inc", bson.D{
+			{key, 1},
+		}},
+	}
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func DeleteGood(client *mongo.Client, ID string) bool {
+	collection := client.Database(Info.DataBase).Collection(Info.CollectionG)
+	_, err := collection.DeleteOne(context.TODO(), bson.D{{"id",ID}})
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 func CheckHot(client *mongo.Client, keyword string) (bool, *HotWord){
 	collection := client.Database(Info.DataBase).Collection(Info.CollectionH)
 	filter := bson.D{{"keyword", keyword}}
@@ -102,7 +221,7 @@ func CheckHot(client *mongo.Client, keyword string) (bool, *HotWord){
 func InsertHot(client *mongo.Client, h *HotWord) error{
 	collection := client.Database(Info.DataBase).Collection(Info.CollectionH)
 	h.Order = 4
-	h.Count = 1
+	h.Count = 0
 	_, err := collection.InsertOne(context.TODO(), h)
 	if err != nil {
 		fmt.Println("插入数据库失败")
@@ -146,33 +265,38 @@ func UpdateHot(client *mongo.Client, h *HotWord) int64{
 	}
 
 	if r.Count > r1.Count || r1.Count == 0{
-		update = bson.D{
-			{"$set", bson.D{
-				{"order", 4},
-			}},
+		if r.Order != 1{
+			if r.Order >= 4{
+				update = bson.D{
+					{"$set", bson.D{
+						{"order", 4},
+					}},
+				}
+				_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 3}}, update)
+				if err != nil {
+				}
+			}
+			if r.Order >= 3{
+				update = bson.D{
+					{"$set", bson.D{
+						{"order", 3},
+					}},
+				}
+				_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 2}}, update)
+				if err != nil {
+				}
+			}
+			if r.Order >= 2{
+				update = bson.D{
+					{"$set", bson.D{
+						{"order", 2},
+					}},
+				}
+				_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 1}}, update)
+				if err != nil {
+				}
+			}
 		}
-		_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 3}}, update)
-		if err != nil {
-		}
-
-		update = bson.D{
-			{"$set", bson.D{
-				{"order", 3},
-			}},
-		}
-		_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 2}}, update)
-		if err != nil {
-		}
-
-		update = bson.D{
-			{"$set", bson.D{
-				{"order", 2},
-			}},
-		}
-		_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 1}}, update)
-		if err != nil {
-		}
-
 		update = bson.D{
 			{"$set", bson.D{
 				{"order", 1},
@@ -182,24 +306,28 @@ func UpdateHot(client *mongo.Client, h *HotWord) int64{
 		if err != nil {
 		}
 	} else if r.Count > r2.Count || r2.Count == 0{
-		update = bson.D{
-			{"$set", bson.D{
-				{"order", 4},
-			}},
+		if r.Order != 2 {
+			if r.Order >= 4{
+				update = bson.D{
+					{"$set", bson.D{
+						{"order", 4},
+					}},
+				}
+				_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 3}}, update)
+				if err != nil {
+				}
+			}
+			if r.Order >= 3{
+				update = bson.D{
+					{"$set", bson.D{
+						{"order", 3},
+					}},
+				}
+				_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 2}}, update)
+				if err != nil {
+				}
+			}
 		}
-		_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 3}}, update)
-		if err != nil {
-		}
-
-		update = bson.D{
-			{"$set", bson.D{
-				{"order", 3},
-			}},
-		}
-		_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 2}}, update)
-		if err != nil {
-		}
-
 		update = bson.D{
 			{"$set", bson.D{
 				{"order", 2},
@@ -208,14 +336,16 @@ func UpdateHot(client *mongo.Client, h *HotWord) int64{
 		_, err := collection.UpdateOne(context.TODO(), filter, update)
 		if err != nil {
 		}
-	}else if r.Count > r3.Count || r3.Count == 0{
-		update = bson.D{
-			{"$set", bson.D{
-				{"order", 4},
-			}},
-		}
-		_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 3}}, update)
-		if err != nil {
+	}else if r.Count >= r3.Count || r3.Count == 0{
+		if r.Order >= 4 {
+			update = bson.D{
+				{"$set", bson.D{
+					{"order", 4},
+				}},
+			}
+			_, err = collection.UpdateOne(context.TODO(), bson.D{{"order", 3}}, update)
+			if err != nil {
+			}
 		}
 		update = bson.D{
 			{"$set", bson.D{

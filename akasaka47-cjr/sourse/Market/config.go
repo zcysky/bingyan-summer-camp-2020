@@ -99,21 +99,21 @@ type ResHot struct {
 }
 
 type ResGoodInfoDetail struct {
-	Success bool           `json:"success"`
-	Error   string         `json:"error"`
-	Data    GoodInfoDetail `json:"data"`
+	Success bool            `json:"success"`
+	Error   string          `json:"error"`
+	Data    *GoodInfoDetail `json:"data"`
 }
 
-type ResUserInfoDetail struct {
-	Success bool     `json:"success"`
-	Error   string   `json:"error"`
-	Data    UserInfo `json:"data"`
+type ResUserInfo struct {
+	Success bool      `json:"success"`
+	Error   string    `json:"error"`
+	Data    *UserInfo `json:"data"`
 }
 
 type ResUserInfoOther struct {
 	Success bool          `json:"success"`
 	Error   string        `json:"error"`
-	Data    UserInfoOther `json:"data"`
+	Data    *UserInfoOther `json:"data"`
 }
 
 type ResUserGoods struct {
@@ -138,14 +138,15 @@ type UserInfo struct {
 }
 
 type UserInfoAll struct {
-	Id                string `json:"id"`
-	Username          string `json:"username"`
-	Password          string `json:"password"`
-	NickName          string `json:"nickname"`
-	Mobile            string `json:"mobile"`
-	Email             string `json:"email"`
-	TotalViewCount    int    `json:"total_view_count"`
-	TotalCollectCount int    `json:"total_collect_count"`
+	Id                string         `json:"id"`
+	Username          string         `json:"username"`
+	Password          string         `json:"password"`
+	NickName          string         `json:"nickname"`
+	Mobile            string         `json:"mobile"`
+	Email             string         `json:"email"`
+	TotalViewCount    int            `json:"total_view_count"`
+	TotalCollectCount int            `json:"total_collect_count"`
+	Collections       []*GoodInfoSim `json:"collections"`
 }
 
 type UserInfoOther struct {
@@ -161,6 +162,18 @@ type GoodInfoList struct {
 	Price    int    `json:"price"`
 	Category int    `json:"category"`
 	Picture  string `json:"picture"`
+}
+
+type GoodInfoALL struct {
+	Id           string `json:"id"`
+	PubUser      string `json:"pub_user"`
+	Title        string `json:"title"`
+	Desc         string `json:"desc"`
+	Category     int    `json:"category"`
+	Price        int    `json:"price"`
+	Picture      string `json:"picture"`
+	ViewCount    int    `json:"view_count"`
+	CollectCount int    `json:"collect_count"`
 }
 
 type GoodInfoDetail struct {
