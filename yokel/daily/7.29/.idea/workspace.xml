@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="dc7988a5-9bf0-4489-9b20-793f288c65e6" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../7.17/warmup/API.md" beforeDir="false" afterPath="$PROJECT_DIR$/../7.17/warmup/API.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="/usr/lib/go-1.13" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1fMM4B6RK86Un5jTHHzFw07W07s" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../7.15" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="go" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/icourses" />
+      <recent name="$PROJECT_DIR$/icourses/defination" />
+    </key>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="857" y="398" width="257" height="330" key="EnvironmentVariablesDialog" timestamp="1596029594744">
+      <screen x="72" y="34" width="1848" height="1046" />
+    </state>
+    <state x="857" y="398" width="257" height="330" key="EnvironmentVariablesDialog/72.34.1848.1046@72.34.1848.1046" timestamp="1596029594744" />
+    <state x="726" y="258" width="530" height="605" key="FileChooserDialogImpl" timestamp="1596029018025">
+      <screen x="72" y="34" width="1848" height="1046" />
+    </state>
+    <state x="726" y="258" width="530" height="605" key="FileChooserDialogImpl/72.34.1848.1046@72.34.1848.1046" timestamp="1596029018025" />
+    <state x="360" y="104" width="1271" height="912" key="SettingsEditor" timestamp="1596028495273">
+      <screen x="72" y="34" width="1848" height="1046" />
+    </state>
+    <state x="360" y="104" width="1271" height="912" key="SettingsEditor/72.34.1848.1046@72.34.1848.1046" timestamp="1596028495273" />
+  </component>
+</project>
