@@ -41,6 +41,7 @@ type Commodity struct {
 	Category    int                `bson:"category"`
 	Picture     string             `bson:"picture"`
 	Publisher   string             `bson:"publisher"`
+	Deleted     bool               `bson:"deleted"`
 	View        int                `bson:"view"`
 	Collect     int                `bson:"collect"`
 }

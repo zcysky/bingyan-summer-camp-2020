@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"mall/model"
 	"net/http"
+	"regexp"
 )
 
 func GetCommodities(c *gin.Context) {
@@ -13,7 +14,8 @@ func GetCommodities(c *gin.Context) {
 		failMsg(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	commodities := model.GetCommodities(req)
+	req.Keyword = stripSpecialCharacter(req.Keyword) // to prevent XSS attack
+	commodities, total := model.GetCommodities(req)
 	var res []gin.H
 	for i := 0; i < len(commodities); i++ {
 		res = append(res, gin.H{
@@ -24,7 +26,7 @@ func GetCommodities(c *gin.Context) {
 			"picture":  commodities[i].Picture,
 		})
 	}
-	c.JSON(http.StatusOK, gin.H{"success": true, "error": "", "data": res})
+	c.JSON(http.StatusOK, gin.H{"success": true, "error": "", "total": total, "data": res})
 }
 
 func GetHots(c *gin.Context) {
@@ -86,6 +88,8 @@ func QuerySelfCommodities(c *gin.Context) {
 func PublishCommodity(c *gin.Context) {
 	var commodity model.PublishRequest
 	err := c.BindJSON(&commodity)
+	commodity.Title = stripSpecialCharacter(commodity.Title)
+	commodity.Desc = stripSpecialCharacter(commodity.Desc)
 	if err != nil {
 		failMsg(c, http.StatusBadRequest, err.Error())
 		return
@@ -115,4 +119,14 @@ func DeleteCommodity(c *gin.Context) {
 		"error":   "",
 		"data":    "ok",
 	})
+}
+
+func stripSpecialCharacter(str string) (res string) {
+	for _, c := range str {
+		reg := regexp.MustCompile("[`@#$%^&*()+=|',.<>/]")
+		if !reg.MatchString(string(c)) {
+			res += string(c)
+		}
+	}
+	return res
 }
