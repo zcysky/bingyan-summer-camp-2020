@@ -13,9 +13,15 @@ type SMTPStruct struct {
 	Port     string `json:"port"`
 }
 
+type JWTInfo struct {
+	Secret			string	`json:"secret"`
+	EffectiveTime	int 	`json:"effective_time"`
+}
+
 type ConfigStruct struct {
 	Invitation 	string		`json:"invitation"`
 	SMTP 		SMTPStruct	`json:"smtp"`
+	JWT			JWTInfo		`json:"jwt"`
 }
 
 

@@ -8,8 +8,9 @@ import (
 func InitRouter() *gin.Engine {
 	r := gin.Default()
 	r.POST("/api/register", controller.Register)
-	//r.POST("/api/login", controller.Login)
-	//r.GET("/api/queryall", controller.QueryAll)
-	//r.GET("/api/query", controller.Query)
+	r.POST("/api/login", controller.Login)
+	r.GET("/api/queryall", controller.QueryAll)
+	r.GET("/api/queryone", controller.QueryOne)
+	r.GET("/api/remove", controller.Remove)
 	return r
 }

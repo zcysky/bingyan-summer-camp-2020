@@ -25,7 +25,7 @@ func Register(c *gin.Context) {
 	exist := model.CheckEmail(dbForm.Email)
 	if exist == true {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"result":	"Email address is invalid",
+			"result":	"Email address is invalid已注册",
 		})
 		return
 	}

@@ -1,0 +1,13 @@
+{
+  "invitation": "123456",
+  "smtp": {
+    "user": "m15265723639@163.com",
+    "password":   "APYDOSTDPDUOEEHQ",
+    "server":   "smtp.163.com",
+    "port":   "25"
+  },
+  "jwt": {
+    "effective_time":  60,
+    "secret":         "a6fs5d46as5d4"
+  }
+}
