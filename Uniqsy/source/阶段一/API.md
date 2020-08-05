@@ -37,6 +37,17 @@
 
 `id`为用户信息在MongoDB中存储的id
 
+#### 邮箱已被注册时
+
+- Status: HTTP 403 Forbidden
+- Body:
+
+```json
+{
+    "result":	"This Email address has been registered"
+}
+```
+
 #### 邮箱信息有误时
 
 - Status: HTTP 400 Bad Request
@@ -44,7 +55,19 @@
 
 ```json
 {
-    "result":	"Email address is invalid"
+    "result":	"Email address is invalid",
+    "error":	"报错内容"
+}
+```
+
+#### 管理员注册邀请码不正确时
+
+- Status: HTTP 400 Bad Request
+- Body;
+
+```json
+{
+    "result":	"invitation code wrong"
 }
 ```
 
@@ -73,35 +96,54 @@
 - Status: HTTP 200 OK
 - Body:
 
-#### 密码错误时
+```json
+{
+	"result":	"Login successfully",
+	"Authorization": "Bearer " + token
+}
+```
 
-- Status: HTTP 403 Forbidden
+#### 密码错误或用户不存在时
+
+- Status: HTTP 400 Bad Request
 - Body:
 
 ```json
 {
-    "result":	"wrong password"
+    "result":	"Wrong password or wrong email address",
+    "error":	"报错内容"
 }
 ```
 
-#### 用户不存在时
+#### 登录信息格式错误时
 
-- Status: HTTP 403 Forbidden
+- Status: HTTP 400 Bad Request
 - Body:
 
 ```json
 {
-    "result":	"wrong email address"
+	"result":	"Wrong form struct",
+    "error":	"报错内容"
 }
 ```
+
+
 
 ## 全部查询
 
 ### Request
 
-- Method: **GET**
-- URL: `/api/queryall/<limit><page>`
+- Method: **POST**
+- URL: `/api/queryall/`
 - Header: token
+- Body:
+
+```json
+{
+    "limit": 	"每页显示的用户数量",
+    "page":		"第几页"
+}
+```
 
 ### Response
 
@@ -112,13 +154,14 @@
 
 ```json
 {
-    "count":	1,
+    "result":	"Query all users successfully",
+    "total":	"普通用户总人数",
     "limit":	50,
     "page":		1,
     "users": [
         {
             "user_id":	"***",
-            "username":	"***",
+            "user_name":	"***",
             "tel":		"***",
             "email":	"***"
         }
@@ -126,14 +169,15 @@
 }
 ```
 
-#### 非管理员身份
+#### 查询失败
 
-- Status: HTTP 403 Forbidden
+- Status: HTTP 403Forbidden 或 400 Bad Request
 - Body:
 
 ```json
 {
-    "result":	"Insufficient permission"
+    "result":	"失败结果",
+    "error":	"具体报错"
 }
 ```
 
@@ -154,34 +198,25 @@
 
 ```json
 {
-    "user_id":	"***",
-    "username":	"***",
-    "tel":		"***",
-    "email":	"***"
+    "result":	"query successfully",
+    "user":	{
+        "user_id":		user.UserID,
+        "user_name":	user.Username,
+        "user_phone":	user.Phone,
+        "user_email":	user.Email,
+	}
 }
 ```
 
+#### 查询失败
 
-
-#### 非管理员身份
-
-- Status: HTTP 403 Forbidden
+- Status: HTTP 403 Forbidden 或 400 Bad Request
 - Body:
 
 ```json
 {
-    "result":	"Insufficient permission"
-}
-```
-
-#### 查找不到
-
-- Status: HTTP 404 Not Found
-- Body:
-
-```json
-{
-    "result":	"Not found the user"
+    "result":	"失败结果",
+    "error":	"具体报错"
 }
 ```
 
@@ -202,35 +237,20 @@
 
 ```json
 {
-    "result":	"Delete the user successfully",
+    "result":	"remove successfully",
     "user_id":	"***",
-    "username":	"***",
-    "tel":		"***",
-    "email":	"***"
 }
 ```
 
+#### 删除失败
 
-
-#### 非管理员身份
-
-- Status: HTTP 403 Forbidden
+- Status: HTTP 403 Forbidden 或 400 Bad Request
 - Body:
 
 ```json
 {
-    "result":	"Insufficient permission"
-}
-```
-
-#### 查找不到
-
-- Status: HTTP 404 Not Found
-- Body:
-
-```json
-{
-    "result":	"Not found the user"
+    "result":	"失败结果",
+    "error":	"具体报错"
 }
 ```
 

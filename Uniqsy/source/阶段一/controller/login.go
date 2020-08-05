@@ -13,7 +13,7 @@ func Login(c *gin.Context) {
 	err := c.BindJSON(&loginForm)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"result":	"wrong form struct",
+			"result":	"Wrong form struct",
 			"error":	err.Error(),
 		})
 		return
@@ -23,6 +23,7 @@ func Login(c *gin.Context) {
 	id, err := model.VerifyLoginForm(loginForm)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
+			"result":	"Wrong password or wrong email address"
 			"error":	err.Error(),
 		})
 		return
@@ -38,8 +39,5 @@ func Login(c *gin.Context) {
 	}
 
 	//返回登录结果
-	c.JSON(http.StatusOK, gin.H{
-		"result":	"login successfully",
-		"Authorization": "Bearer " + token,
-	})
+	c.JSON(http.StatusOK, gin.H)
 }

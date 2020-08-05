@@ -43,19 +43,18 @@ func QueryAll(c *gin.Context) {
 	var res []gin.H
 	for _, user := range users {
 		res = append(res, gin.H{
-			"userid":   user.UserID,
-			"username": user.Username,
-			"phone":    user.Phone,
+			"user_id":   user.UserID,
+			"user_name": user.Username,
+			"tel":    user.Phone,
 			"email":    user.Email,
 		})
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"message": "success",
-		"status":  http.StatusOK,
-		"total":   total,
-		"page":    queryForm.Page,
-		"limit":   queryForm.Limit,
-		"users":   res,
+		"result":	"Query all users successfully",
+		"total":   	total,
+		"limit":   	queryForm.Limit,
+		"page":   	queryForm.Page,
+		"users":  	res,
 	})
 }
 

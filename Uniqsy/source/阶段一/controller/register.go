@@ -37,6 +37,7 @@ func Register(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"result":	"Email address is invalid",
+			"error":	err.Error(),
 		})
 		return
 	}
@@ -49,7 +50,7 @@ func Register(c *gin.Context) {
 			collection = "admin"
 		} else {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"status":	"invitation code wrong",
+				"result":	"invitation code wrong",
 			})
 			return
 		}
