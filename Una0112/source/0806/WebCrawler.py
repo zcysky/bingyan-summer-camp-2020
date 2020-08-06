@@ -33,20 +33,11 @@ class Spider:
         self.dealPage(content_list)
 
     def dealPage(self, item_list):
-        """
-            @brief 处理得到的糗事列表
-            @param item_list 得到的糗事列表
-            @param page 处理第几页
-        """
         for item in item_list:
             item = item.replace('<span>', "").replace('<span class="contentForAll">查看全文', "").replace("</span>","").replace("<br/>", "").replace("\n", "")
             self.writePage(item)
 
     def writePage(self, text):
-        """
-            @brief 将数据追加写进文件中
-            @param text 文件内容
-        """
         myFile = open("./shenzu.md", 'a') 
         myFile.write(text + "\n\n")
         myFile.close()
