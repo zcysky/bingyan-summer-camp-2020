@@ -37,9 +37,10 @@ func GenerateToken(loginForm LoginForm) (tokenStr string, err error) {
 }
 
 func ParseToken(tokenStr string) (userName string, err error) {
-	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.Config.JWT.Secret), nil
-	})
+	token, err := jwt.ParseWithClaims(tokenStr, &JWTStruct{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(config.Config.JWT.Secret), nil
+		})
 	if err != nil {
 		return "", err
 	}

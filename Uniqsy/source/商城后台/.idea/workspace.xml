@@ -39,6 +39,32 @@
       <recent name="F:\冰岩夏令营任务\mall\router" />
     </key>
   </component>
+  <component name="RunManager" selected="Go Build.go build mall">
+    <configuration name="go build mall" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="mall" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <package value="mall" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build router.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="mall" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/router/router.go" />
+      <package value="mall" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build mall" />
+        <item itemvalue="Go Build.go build router.go" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
@@ -60,6 +86,22 @@
       <screen x="62" y="0" width="1474" height="864" />
     </state>
     <state x="580" y="187" key="FileChooserDialogImpl/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596871906023" />
+    <state width="1431" height="224" key="GridCell.Tab.0.bottom" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.bottom/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
+    <state width="1431" height="224" key="GridCell.Tab.0.center" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.center/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
+    <state width="1431" height="224" key="GridCell.Tab.0.left" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.left/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
+    <state width="1431" height="224" key="GridCell.Tab.0.right" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.right/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
     <state x="462" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1596886562961">
       <screen x="62" y="0" width="1474" height="864" />
     </state>

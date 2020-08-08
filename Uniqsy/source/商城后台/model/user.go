@@ -40,9 +40,9 @@ func VerifyLogin(loginForm LoginForm) (err error) {
 
 //用户注册信息表单
 type RegisterForm struct {
-	UserName string `json:"user_name" bson:"username"`
+	UserName string `json:"username" bson:"username"`
 	Password string `json:"password" bson:"password"`
-	NickName string `json:"nick_name" bson:"nickname"`
+	NickName string `json:"nickname" bson:"nickname"`
 	Mobile   string `json:"mobile" bson:"mobile"`
 	Email    string `json:"email" bson:"email"`
 }

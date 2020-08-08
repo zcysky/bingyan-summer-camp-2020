@@ -73,7 +73,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	successStr(c, http.StatusOK, "Bearer" + tokenStr)
+	successStr(c, http.StatusOK, "Bearer " + tokenStr)
 }
 
 //根据用户名获取用户信息
@@ -138,7 +138,7 @@ func checkRegisterInfo(form model.RegisterForm) error {
 	//检查昵称格式
 	valid = reg.MatchString(form.NickName)
 	if !valid {
-		return errors.New("invalid username")
+		return errors.New("invalid nickname")
 	}
 
 	//检查密码格式

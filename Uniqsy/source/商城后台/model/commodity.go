@@ -11,7 +11,7 @@ import (
 
 //数据库中商品的存储信息
 type Commodity struct {
-	ID          primitive.ObjectID `bson:"_id"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	Title       string             `bson:"title"`
 	Description string             `bson:"description"`
 	Price       float32            `bson:"price"`
@@ -27,7 +27,7 @@ type GetCommoditiesForm struct {
 	Page 		int		`json:"page"`
 	Limit 		int		`json:"limit"`
 	Category	int		`json:"category"`
-	KeyWord		string	`json:"key_word"`
+	KeyWord		string	`json:"keyword"`
 }
 
 //根据条件获取商品

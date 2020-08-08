@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"mall/model"
 	"net/http"
@@ -58,6 +59,8 @@ func PostNewCommodity(c *gin.Context) {
 		fail(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	successStr(c, http.StatusOK, "ok")
 }
 
 //获取当前热词
