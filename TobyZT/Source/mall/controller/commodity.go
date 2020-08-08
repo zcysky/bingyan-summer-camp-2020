@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"html"
 	"mall/model"
 	"net/http"
-	"regexp"
+	"unicode/utf8"
 )
 
 func GetCommodities(c *gin.Context) {
@@ -14,12 +16,12 @@ func GetCommodities(c *gin.Context) {
 		failMsg(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	req.Keyword = stripSpecialCharacter(req.Keyword) // to prevent XSS attack
+	req.Keyword = html.EscapeString(req.Keyword) // to prevent XSS attack
 	commodities, total := model.GetCommodities(req)
 	var res []gin.H
 	for i := 0; i < len(commodities); i++ {
 		res = append(res, gin.H{
-			"id":       commodities[i].ID.String(),
+			"id":       commodities[i].ID.Hex(),
 			"title":    commodities[i].Title,
 			"price":    commodities[i].Price,
 			"category": commodities[i].Category,
@@ -88,18 +90,26 @@ func QuerySelfCommodities(c *gin.Context) {
 func PublishCommodity(c *gin.Context) {
 	var commodity model.PublishRequest
 	err := c.BindJSON(&commodity)
-	commodity.Title = stripSpecialCharacter(commodity.Title)
-	commodity.Desc = stripSpecialCharacter(commodity.Desc)
 	if err != nil {
 		failMsg(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	err = checkRequest(commodity)
+	if err != nil {
+		failMsg(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+	commodity.Title = html.EscapeString(commodity.Title)
+	commodity.Desc = html.EscapeString(commodity.Desc)
+
 	username, exist := c.Get("username")
 	if !exist {
 		failMsg(c, http.StatusBadRequest, "user not found")
 		return
 	}
+
 	err = model.AddCommodity(commodity, username.(string))
+	c.JSON(http.StatusOK, gin.H{"success": true, "error": "", "data": "ok"})
 }
 
 func DeleteCommodity(c *gin.Context) {
@@ -121,12 +131,18 @@ func DeleteCommodity(c *gin.Context) {
 	})
 }
 
-func stripSpecialCharacter(str string) (res string) {
-	for _, c := range str {
-		reg := regexp.MustCompile("[`@#$%^&*()+=|',.<>/]")
-		if !reg.MatchString(string(c)) {
-			res += string(c)
-		}
+func checkRequest(s model.PublishRequest) (err error) {
+	if s.Title == "" || utf8.RuneCountInString(s.Title) > 40 {
+		return fmt.Errorf("invalid title")
 	}
-	return res
+	if s.Desc == "" || utf8.RuneCountInString(s.Desc) > 150 {
+		return fmt.Errorf("invalid description")
+	}
+	if s.Category < 1 || s.Category > 9 {
+		return fmt.Errorf("invalid category")
+	}
+	if s.Price <= 0 {
+		return fmt.Errorf("invalid price")
+	}
+	return nil
 }

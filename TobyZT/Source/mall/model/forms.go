@@ -1,6 +1,9 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type User struct {
 	Username string `json:"username" bson:"username"`
@@ -69,4 +72,42 @@ type PublishRequest struct {
 type Counter struct {
 	ViewCnt    int
 	CollectCnt int
+}
+
+type Comment struct {
+	ID             primitive.ObjectID `bson:"_id"`
+	Username       string             `bson:"username"`
+	Content        string             `bson:"content"`
+	Time           time.Time          `bson:"time"`
+	UnderCommodity primitive.ObjectID `bson:"under_commodity"`
+	ReplyTo        primitive.ObjectID `bson:"reply_to"`
+}
+
+type CommentRequest struct {
+	Username       string `bson:"username"`
+	Content        string `bson:"content"`
+	UnderCommodity string `bson:"under_commodity"`
+	ReplyTo        string `bson:"reply_to"`
+}
+
+func makeComment(form CommentRequest) (comment Comment, err error) {
+	ObjID := primitive.NewObjectID()
+	t := time.Now()
+	replyTo, err := primitive.ObjectIDFromHex(form.ReplyTo)
+	if err != nil {
+		return comment, err
+	}
+	commodity, err := primitive.ObjectIDFromHex(form.UnderCommodity)
+	if err != nil {
+		return comment, err
+	}
+	comment = Comment{
+		ID:             ObjID,
+		Username:       form.Username,
+		Content:        form.Content,
+		Time:           t,
+		UnderCommodity: commodity,
+		ReplyTo:        replyTo,
+	}
+	return comment, nil
 }

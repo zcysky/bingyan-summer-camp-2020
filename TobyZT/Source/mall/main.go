@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-
 	err := model.SetupDatabase()
 	if err != nil {
 		log.Println(err)

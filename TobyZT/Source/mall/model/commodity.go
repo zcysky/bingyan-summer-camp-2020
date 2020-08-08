@@ -3,29 +3,33 @@ package model
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"strings"
 )
 
 func GetCommodities(req CommodityRequest) (commodities []Commodity, total int64) {
-	var filter bson.M
-	var filter2 []bson.M
-	keywords := strings.Split(req.Keyword, " ")
-	for _, k := range keywords {
-		filter2 = append(filter2, bson.M{"title": bson.M{"$regex": k}})
+	filter := make(bson.M)
+	var keyFilter []bson.M
+	var keywords []string
+	filter["deleted"] = false
+	if req.Keyword != "" {
+		keywords = strings.Split(req.Keyword, " ")
+		for _, k := range keywords {
+			keyFilter = append(keyFilter, bson.M{"title": bson.M{"$regex": k}})
+		}
+		filter["$or"] = keyFilter
 	}
 	if req.Category != 0 {
-		filter = bson.M{"category": req.Category, "deleted": false, "$or": filter2}
-	} else {
-		filter = bson.M{"title": filter2, "deleted": false}
+		filter["category"] = req.Category
 	}
-	var opts *options.FindOptions
-	opts.SetLimit(int64(req.Limit))
-	opts.SetSkip(int64((req.Page - 1) * req.Limit))
+
+	opts := options.Find().SetLimit(int64(req.Limit))
+	opts.SetSkip(int64(req.Page * req.Limit))
 	opts.SetSort(bson.M{"view": -1})
-	cur, _ := commodityColl.Find(context.TODO(), filter, opts)
+	cur, _ := commodityColl.Find(context.TODO(), filter)
 	total, _ = commodityColl.CountDocuments(context.TODO(), filter)
 	if cur != nil {
 		cur.All(context.TODO(), &commodities)
@@ -34,8 +38,8 @@ func GetCommodities(req CommodityRequest) (commodities []Commodity, total int64)
 	//Save keywords
 	for _, k := range keywords {
 		filter = bson.M{"key": k}
-		res := keywordColl.FindOne(context.TODO(), filter)
-		if res == nil {
+		res, _ := keywordColl.CountDocuments(context.TODO(),filter)
+		if res == 0 {
 			keywordColl.InsertOne(context.TODO(), bson.M{"key": k, "value": 1})
 			continue
 		}
@@ -80,9 +84,11 @@ func GetSelfCommodities(username string) (commodities []SingleData) {
 }
 
 func AddCommodity(form PublishRequest, username string) (err error) {
-	commodity := Commodity{Title: form.Title, Description: form.Desc, Price: form.Price,
+	objID := primitive.NewObjectID()
+	commodity := Commodity{ID: objID, Title: form.Title, Description: form.Desc, Price: form.Price,
 		Category: form.Category, Picture: form.Picture, Publisher: username,
 		View: 0, Collect: 0}
+
 	_, err = commodityColl.InsertOne(context.TODO(), commodity)
 	return err
 }

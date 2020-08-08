@@ -42,6 +42,7 @@ func QueryOneUser(username string) (form User, cnt Counter, err error) {
 }
 
 func UpdateUser(username string, updateForm UpdateForm) (err error) {
+	updateForm.Password = Encrypt(updateForm.Password)
 	filter := bson.M{"username": username}
 	update := bson.M{"$set": updateForm}
 	_, err = userColl.UpdateOne(context.TODO(), filter, update)

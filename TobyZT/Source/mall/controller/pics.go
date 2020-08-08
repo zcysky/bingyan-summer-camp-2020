@@ -1,10 +1,9 @@
 package controller
 
 import (
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
-
-	"github.com/gin-gonic/gin"
 )
 
 func FileUpload(c *gin.Context) {

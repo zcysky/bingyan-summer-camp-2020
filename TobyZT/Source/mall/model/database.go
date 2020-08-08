@@ -13,6 +13,7 @@ var client *mongo.Client
 var userColl *mongo.Collection
 var commodityColl *mongo.Collection
 var keywordColl *mongo.Collection
+var commentColl *mongo.Collection
 
 func SetupDatabase() (err error) {
 	clientOptions := options.Client().ApplyURI("mongodb://127.0.0.1:27017")
@@ -32,11 +33,7 @@ func SetupDatabase() (err error) {
 	userColl = client.Database("mall").Collection("users")
 	commodityColl = client.Database("mall").Collection("commodities")
 	keywordColl = client.Database("mall").Collection("keywords")
+	commentColl = client.Database("mall").Collection("comments")
 	log.Println("Database connected successfully!")
 	return err
 }
-
-
-
-
-

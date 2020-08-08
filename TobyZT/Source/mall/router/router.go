@@ -10,7 +10,7 @@ import (
 func InitRouter() *gin.Engine {
 	router := gin.Default()
 	router.MaxMultipartMemory = 4 << 20 // limit: 4MB
-	userGroup := router.Group("")
+	userGroup := router.Group("/api")
 	{
 		userGroup.POST("/user", controller.Signup)
 		userGroup.POST("/user/login", controller.Login)
@@ -22,7 +22,7 @@ func InitRouter() *gin.Engine {
 		userGroup.GET("/user/:id", controller.LoginVerification, controller.GetPublicInfo)
 	}
 
-	commodityGroup := router.Group("")
+	commodityGroup := router.Group("/api")
 	{
 		//get public commodity:
 		commodityGroup.GET("/commodities", controller.GetCommodities)
@@ -39,7 +39,7 @@ func InitRouter() *gin.Engine {
 
 	}
 
-	collectionGroup := router.Group("")
+	collectionGroup := router.Group("/api")
 	{
 		//get self collections:
 		collectionGroup.GET("/me/collections", controller.LoginVerification, controller.GetSelfCollections)
@@ -49,10 +49,19 @@ func InitRouter() *gin.Engine {
 		collectionGroup.DELETE("/me/collections", controller.LoginVerification, controller.DeleteCollections)
 	}
 
-	fileGroup := router.Group("")
+	fileGroup := router.Group("/api")
 	{
+		// upload a picture:
 		fileGroup.POST("/pics", controller.LoginVerification, controller.FileUpload)
+		// get a picture:
 		fileGroup.GET("/pics/:filename", controller.GetPicture)
+	}
+	commentGroup := router.Group("/api")
+	{
+		// get comments of a particular commodity
+		commentGroup.GET("/comment", controller.GetComments)
+		// leave a comment under commodities:
+		commentGroup.POST("/comment", controller.LoginVerification, controller.AddComment)
 	}
 	return router
 }
