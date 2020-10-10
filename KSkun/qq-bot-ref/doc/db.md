@@ -2,12 +2,12 @@
 
 ## Mongo
 
-数据库名：`qq-bot-backend`
+数据库名：`qq-bot-ref`
 
 ### 事件集合 event
 
 - _id `ObjectId`：事件 ID
-- user `String`：事件提醒的 QQ 号
+- user `uint`：事件提醒的 QQ 号
 - desc `String`：事件描述
 - time `int64`：事件发生时间（时间戳）
 - remind `Boolean`：事件是否提醒

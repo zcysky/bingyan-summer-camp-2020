@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 const colNameEvent = "event"
@@ -17,12 +18,28 @@ func initModelEvent() {
 
 type Event struct {
 	ID             primitive.ObjectID `bson:"_id" json:"_id"`
-	User           string             `bson:"user" json:"user"`
+	User           uint               `bson:"user" json:"user"`
 	Desc           string             `bson:"desc" json:"desc"`
 	Time           int64              `bson:"time" json:"time"`
 	Remind         bool               `bson:"remind" json:"remind"`
 	RemindTime     int64              `bson:"remind_time" json:"remind_time"`
 	RemindInterval int                `bson:"remind_interval" json:"remind_interval"`
+	IsReminding    bool               `bson:"is_reminding" json:"-"`
+}
+
+func InitRemindingStatus() error {
+	_, err := colEvent.UpdateMany(context.Background(), bson.M{}, bson.M{"$set": bson.M{"is_reminding": false}})
+	return err
+}
+
+func SetReminding(idHex string) error {
+	id, err := primitive.ObjectIDFromHex(idHex)
+	if err != nil {
+		return err
+	}
+
+	_, err = colEvent.UpdateOne(context.Background(), bson.M{"_id": id}, bson.M{"$set": bson.M{"is_reminding": true}})
+	return err
 }
 
 func GetEventByID(idHex string) (Event, bool, error) {
@@ -43,10 +60,22 @@ func GetEventByID(idHex string) (Event, bool, error) {
 	return event, true, nil
 }
 
-func GetEventsByCondition(condition bson.M) ([]Event, error) {
+func GetEventsByUser(user uint) ([]Event, error) {
 	var events []Event
+	result, err := colEvent.Find(context.Background(), bson.M{"user": user})
+	if err != nil {
+		return events, err
+	}
+	err = result.All(context.Background(), &events)
+	return events, err
+}
 
-	result, err := colEvent.Find(context.Background(), condition)
+func GetEventsToRemind() ([]Event, error) {
+	var events []Event
+	result, err := colEvent.Find(context.Background(), bson.M{
+		"remind_time": bson.M{"$lte": time.Now().Unix()}, 
+		"is_reminding": false,
+	})
 	if err != nil {
 		return events, err
 	}
@@ -61,20 +90,6 @@ func AddEvent(event Event) (string, error) {
 		return "", err
 	}
 	return event.ID.Hex(), nil
-}
-
-func UpdateEvent(idHex string, update bson.M) error {
-	id, err := primitive.ObjectIDFromHex(idHex)
-	if err != nil {
-		return err
-	}
-
-	updateQuery := bson.M{
-		"$set": update,
-	}
-
-	_, err = colEvent.UpdateOne(context.Background(), bson.M{"_id": id}, updateQuery)
-	return err
 }
 
 func DeleteEvent(idHex string) error {
