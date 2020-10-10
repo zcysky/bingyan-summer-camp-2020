@@ -53,12 +53,16 @@ type FetchResponse struct {
 }
 
 type Chat struct {
-	Data []string `json:"data"`
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 type Reminder struct {
 	ID      int    `bson:"id"`
 	Type    string `bson:"type"`
 	Due     int64  `bson:"due"`
+	Title   string `bson:"title"`
 	Content string `bson:"content"`
+	Advance int    `bson:"advance"`
+	Gap     int    `bson:"gap"`
 }

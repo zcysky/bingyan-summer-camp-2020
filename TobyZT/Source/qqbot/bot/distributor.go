@@ -21,10 +21,11 @@ func StartListen() {
 	go HandleGroupMessage(groupCh)
 	go HandleFriendMessage(friendCh)
 	updateSession()
+	UpdateReminders()
 	c = cron.New(cron.WithSeconds())
 	c.AddFunc("@every 5m", updateSession)
 	c.AddFunc("@every 4s", distribute)
-	c.AddFunc("@every 5m", UpdateReminders)
+	c.AddFunc("@every 1m", UpdateReminders)
 	c.Run()
 	select {}
 }
