@@ -81,3 +81,54 @@
 [GitHub 使用`gorose orm` + `gin`框架进行开发的用户增删改查](https://github.com/gohouse/goroseGin)
 
 [知乎 如何加密传输和存储用户密码](https://zhuanlan.zhihu.com/p/36603247)
+
+## 0722
+
+### 学习内容
+
+1. 学习docker基本知识
+2. 学习golang中如何使用md5加密
+
+### 参考资料
+
+[docker 从入门到实践](https://yeasy.gitbook.io/docker_practice)
+
+[package md5](https://golang.org/pkg/crypto/md5/)
+
+## 0724
+
+### 学习内容
+
+1. 写完阶段一API文档
+2. 写完项目一除SMTP邮箱验证外的注册部分
+
+### 参考资料
+
+[CSDN BSON介绍 BSON与JSON的区别](https://blog.csdn.net/m0_38110132/article/details/77716792)
+
+[GO 操作MongoDB](https://www.cnblogs.com/Golanguage/p/12285707.html)
+
+## 0725
+
+### 学习内容
+
+1. 学习邮箱的SMTP服务器相关知识
+2. 了解`net/smtp`包的使用方法
+
+## 0726-0803
+
+### 学习内容
+
+今天沉迷暑期社会实践，爆肝策划书、网调问卷。
+
+## 0804
+
+### 学习内容
+
+完成阶段一内容
+
+## 0808
+
+### 学习内容
+
+完成最终任务
