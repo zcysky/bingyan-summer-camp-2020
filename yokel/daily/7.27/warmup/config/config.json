@@ -1,0 +1,6 @@
+{
+  "jwt": {
+    "secret": "yokel",
+    "token_duration": 180
+  }
+}

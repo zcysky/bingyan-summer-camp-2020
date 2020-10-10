@@ -1,0 +1,34 @@
+{
+  "mongo-config": {
+    "db-address": "mongodb://localhost:27017",
+    "db": "icourses",
+    "courses": "courses",
+    "comments": "comments",
+    "users":"users",
+    "lid": 0,
+    "uid": 0,
+    "cid": 0
+  },
+  "echo-config": {
+    "echo-port": ":1323",
+    "get-all-courses": "/allcourses",
+    "get-course": "/course/:lid",
+    "get-all-comments": "/allcomments/:lid",
+    "get-comment":"/comment/:lid",
+    "post-comment": "/comment/:lid",
+    "post-subcmt": "/subcmt/:cid",
+    "get-token": "/token",
+    "post-user": "/:uid",
+    "get-user-all-comments": "/:uid/allcomments"
+  },
+  "jwt-config": {
+    "secret": "yokel",
+    "token-duration": 300
+  },
+  "wx-config": {
+    "app-id": "123",
+    "secret": "456",
+    "grant-type": "authorization_code",
+    "token-api-address":"https://api.weixin.qq.com/sns/jscode2session"
+  }
+}
