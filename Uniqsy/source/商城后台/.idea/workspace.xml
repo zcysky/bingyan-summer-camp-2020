@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="65cb245e-7c20-4b96-b626-2a7c2af4c608" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="C:\Go" />
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1fkVDp7VJcV0VRWFC8xdDF5LT0C" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../mongodbtest" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\冰岩夏令营任务\mall\model\users" />
+      <recent name="F:\冰岩夏令营任务\mall\router" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Build.go build mall">
+    <configuration name="go build mall" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="mall" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <package value="mall" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build router.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="mall" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/router/router.go" />
+      <package value="mall" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build mall" />
+        <item itemvalue="Go Build.go build router.go" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+    <environment>
+      <map>
+        <entry key="GOPROXY" value="https://goproxy.io" />
+      </map>
+    </environment>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="687" y="292" key="EnvironmentVariablesDialog" timestamp="1596869312599">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state x="687" y="292" key="EnvironmentVariablesDialog/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596869312599" />
+    <state x="580" y="187" key="FileChooserDialogImpl" timestamp="1596871906023">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state x="580" y="187" key="FileChooserDialogImpl/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596871906023" />
+    <state width="1431" height="224" key="GridCell.Tab.0.bottom" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.bottom/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
+    <state width="1431" height="224" key="GridCell.Tab.0.center" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.center/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
+    <state width="1431" height="224" key="GridCell.Tab.0.left" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.left/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
+    <state width="1431" height="224" key="GridCell.Tab.0.right" timestamp="1596896927169">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state width="1431" height="224" key="GridCell.Tab.0.right/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596896927169" />
+    <state x="462" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1596886562961">
+      <screen x="62" y="0" width="1474" height="864" />
+    </state>
+    <state x="462" y="181" width="672" height="678" key="search.everywhere.popup/62.0.1474.864/1920.-418.1050.1640@62.0.1474.864" timestamp="1596886562961" />
+  </component>
+</project>

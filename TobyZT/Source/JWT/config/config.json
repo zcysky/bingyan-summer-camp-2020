@@ -1,0 +1,14 @@
+{
+  "secret": "114514",
+  "expire": 60,
+  "users": [
+    {
+      "username": "123",
+      "password": "456"
+    },
+    {
+      "username": "123",
+      "password": "456"
+    }
+  ]
+}

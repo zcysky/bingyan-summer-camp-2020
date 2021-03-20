@@ -1,0 +1,33 @@
+{
+  "success": "%s操作成功",
+  "failed": "%s操作失败，请向管理员反馈问题",
+  "failed_debug": "%s操作失败，错误信息：%s",
+  "unknown_operation": "未知操作",
+
+  "func_help": "获取帮助信息",
+  "func_add": "添加事件",
+  "func_delete": "删除事件",
+  "func_list": "获取事件列表",
+  "func_remind": "提醒事件",
+
+  "help_prefix": "帮助",
+  "help": "【qq-bot-ref %s 帮助文档】\nBy KSkun，冰岩作坊 2020 夏令营阶段二参考实现\n支持的功能有：\n- 添加 <事件标题>：添加一个事件并进入添加事件程序\n- 删除 <事件编号>：删除事件列表中指定编号的事件\n- 列表：获取所有事件列表，列表编号可用于删除事件\n- 帮助：获取帮助信息",
+
+  "add_prefix": "添加",
+  "add_require_time": "设置事件 %s 的时间（示例：%s）",
+  "add_require_remind": "事件 %s 是否需要提醒（是否YyNn）",
+  "add_require_remind_before": "设置事件 %s 提前提醒时间（单位为分钟，示例：120）",
+  "add_require_remind_interval": "设置事件 %s 提醒间隔（单位为分钟，示例：10）",
+
+  "delete_prefix": "删除",
+  "delete_confirm": "确认删除编号为 %d 的事件 %s（是否YyNn）",
+  "delete_abort": "未删除事件",
+
+  "list_prefix": "列表",
+  "list_entry": "%d. %s 时间：%s",
+  "list_entry_remind": " 提前提醒：%d 分钟 提醒间隔：%d 分钟",
+  "list_empty": "未查询到事件",
+
+  "remind": "离事件 %s 还有 %d 分钟",
+  "remind_expire": "事件 %s 已到期"
+}

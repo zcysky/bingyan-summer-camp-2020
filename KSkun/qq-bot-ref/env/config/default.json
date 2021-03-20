@@ -1,0 +1,15 @@
+{
+  "app": {
+    "mirai_host": "127.0.0.1:30000",
+    "mirai_authkey": "5U5uwShuEcJo",
+    "qq_number": 3067018105,
+    "time_layout": "2006-1-2 15:04",
+    "chanel_buffer_size": 100,
+    "debug": true
+  },
+  "mongo": {
+    "address": "127.0.0.1",
+    "port": 27017,
+    "database": "qq-bot-ref"
+  }
+}
